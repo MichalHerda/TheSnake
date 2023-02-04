@@ -1,146 +1,281 @@
-import QtQuick 2.0
+import QtQuick 2.15
+import QtQuick.Window 2.15
 import QtQuick.Controls 2.5
-import QtQml.Models 2.3
-import QtQml 2.3
-
-Window {
-
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------MAIN WINDOW AND FRAME---------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+ApplicationWindow {
     id: mainWindow
-    width: 640
-    height: 480
+    width: 1280
+    height: 960
     visible: true
     title: qsTr("Snake")
-    color: "darkslategrey"
-
-    property int rec1Width: mainWindow.width/1.25
-    property int rec1Height: mainWindow.height
-    property int foodWidth: rec1Width/20
-    property int foodHeight: rec1Height/20
-
-    function findRndX(rec1, food){
-        var rndX;
-        rndX = Math.floor ( Math.random() * ( ( rec1Width - foodWidth) - 0) );
-        console.log("food X: ",rndX)
-        return rndX;
-    }
-
-    function findRndY(rec1, food){
-        var rndY;
-        rndY = Math.floor ( Math.random() * ( ( rec1Height - foodHeight) - 0) );
-        console.log("food Y: ",rndY)
-        return rndY;
-    }
-
+    color: "black"
+//-----------------------------------------------------------------------------------------------------------------------
     Rectangle {
-
-        id: rec1
-        width:  rec1Width
-        height: rec1Height
-        anchors.left: mainWindow.left
-        color: "lightslategrey"
-        border.width: 5
-        border.color: "black"
-        clip: true
-
-        Component{
-
-        id: foodComponent
-
-            Rectangle{
-                id: foodZ
-                width: rec1Width/20
-                height: rec1Height/20
-                color: "green"
-                radius: 10
-                border.width: 5
-                border.color: "orange"
-
-                }
-        }
-
-        Item {
-            id: food
-            property int foodX: findRndX(rec1,food)
-            property int foodY: findRndY(rec1,food)
-            x: foodX
-            y: foodY
-
-
-        Loader {
-           id: foodLoader
-           sourceComponent: foodComponent
-        }
-
-        }
-
-
+        id: frame
+        width: Math.floor(mainWindow.width/1.25)
+        height: Math.floor(mainWindow.height)
+        anchors.left: parent.left
+        color: "blue"
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------GAME AREA---------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
         Rectangle {
-            id: snake
-            width: rec1.width/20
-            height: rec1.height/20
-            color: "red"
-            border.width: 3
-            border.color: "yellow"
-            x: rec1.width/2
-            y: rec1.height/2
+            id: gameArea
+            width: Math.floor(frame.width/1.06)
+            height: Math.floor(frame.height/1.08)
+            anchors.centerIn: parent
+            color: "steelblue"
+            clip: true
+//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------GLOBAL GAME VARIABLES BELOW:-------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+            property int segmentNo: 15                              // <- initial snake segments number to create
+            property int segmentBeginNo: 0                         // <- for initial snake creating purposes
+            property double segmentWidth: gameArea.width/40
+            property double segmentHeight: gameArea.height/35      // <- segment width/height are also food dimensions
+            property int foodNo: 0                                 // <- initial food Number
+//-----------------------------------------------------------------------------------------------------------------------
+            property int buforX: 0                                 // <- bufor variables for moving snake purposes
+            property int buforY: 0
+//-----------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------GAME CONTROL PROPERTIES-----------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
             property int direction: 1
-            property bool horizont: true
+            property bool horizont: true                           // true: move x, false move y
             focus: true
             Keys.onPressed: (event)=> {
                     if (event.key === Qt.Key_Left)
-                        {direction = -1; horizont = true}
+                        {gameArea.direction = -1; gameArea.horizont = true}
                     if (event.key === Qt.Key_Right)
-                        {direction = 1; horizont = true}
+                        {gameArea.direction = 1; gameArea.horizont = true}
                     if (event.key === Qt.Key_Up)
-                        {direction = -1; horizont = false}
+                        {gameArea.direction = -1; gameArea.horizont = false}
                     if (event.key === Qt.Key_Down)
-                        {direction = 1; horizont = false}
+                        {gameArea.direction = 1; gameArea.horizont = false}
+                }
+//-----------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------FOOD ELEMENT----------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+                ListModel {
+                    id: food
+
+                    function add() {
+                        let foodWidth = gameArea.segmentWidth
+                        let foodHeight = gameArea.segmentHeight
+                        let hiXlimit = gameArea.width// - gameArea.segmentWidth
+                        let hiYlimit = gameArea.height// - gameArea.segmentHeight
+                        let foodX = Math.round(Math.floor(Math.random() * (hiXlimit/gameArea.segmentWidth - 0)) * gameArea.segmentWidth) //+ gameArea.segmentWidth
+                        let foodY = Math.round(Math.floor(Math.random() * (hiYlimit/gameArea.segmentHeight - 0)) * gameArea.segmentHeight)// + gameArea.segmentHeight
+
+                        //if ( (foodX % gameArea.segmentWidth === 0) && (foodY % gameArea.segmentHeight === 0) ) {
+                            food.append ({foodX,foodY})
+                            gameArea.foodNo ++
+                        //    }
+                        console.log("foodX:      ", foodX)
+                        console.log("foodY:      ", foodY)
+                        console.log("hiXlimit:   ", hiXlimit)
+                        console.log("hiYlimit:   ", hiYlimit)
+                        console.log("gameArea W: ", gameArea.width)
+                        console.log("gameArea H  ", gameArea.height)
+                        console.log("segment W:  ", gameArea.segmentWidth)
+                        console.log("segment H:  ", gameArea.segmentHeight)
+                    }
+                    Component.onCompleted: add()
+                }
+//----------------------------------------------------------------------------------------------------------------------
+                    Repeater {
+                        id: foodRepeater
+                        model: food
+                        delegate: Rectangle {
+                            id: foodRec
+                            x: foodX
+                            y: foodY
+                            width: gameArea.segmentWidth
+                            height: gameArea.segmentHeight
+                            color: "chartreuse"
+                            border {color: "darkviolet"; width: Math.floor(foodRec.width/10)}
+                        }
+                    }
+//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------SNAKE ELEMENT----------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+                ListModel {
+                    id: snake
+                    property int yCoordinate: Math.round(Math.floor (gameArea.height - (16 * gameArea.segmentHeight)) )
+                    function raiseSnake() {
+                        let snakeX = Math.floor(gameArea.width/2 - ( gameArea.segmentBeginNo * gameArea.segmentWidth) )
+                        let snakeY = yCoordinate
+                        snake.append({ snakeX, snakeY})
+                        gameArea.segmentBeginNo ++
+
+                        console.log("snakeX: ",snakeX)
+                        console.log("snakeY: ",snakeY)
+                    }
+                    Component.onCompleted: raiseSnake()
+                }
+//-----------------------------------------------------------------------------------------------------------------------
+                    Repeater {
+                        id: snakeRepeater
+                        model: snake
+                        delegate: Rectangle {
+                            id: snakeRec
+                            x: snakeX
+                            y: snakeY
+                            width: gameArea.segmentWidth
+                            height: gameArea.segmentHeight
+                            color: "red"
+                            border {color: "darkviolet"; width: Math.floor(snakeRec.width/10)}
+                        }
+                    }
+//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------GAME FUNCTIONS---------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+                function addSegment() {
+                    if (gameArea.segmentBeginNo < gameArea.segmentNo) {
+                        Qt.callLater(snake.raiseSnake)
+                     // gameArea.segmentNo ++
+                        console.log("segmentNo = ", gameArea.segmentBeginNo)
+                    }
+                }
+//-----------------------------------------------------------------------------------------------------------------------
+                function addFood() {
+                    if (gameArea.foodNo < 5 ) {
+                        Qt.callLater(food.add)
+                        console.log("food Number = ", gameArea.foodNo)
+                    }
+                }
+//-----------------------------------------------------------------------------------------------------------------------
+                function snakeMove() {
+                    var preBuforX = 0
+                    var preBuforY = 0
+
+                    for (let i = 0; i < gameArea.segmentNo; i ++) {
+                        var segment = snakeRepeater.itemAt(i)
+                        console.log("snake item no: ",i," coordinate x = ",segment.x)
+                        console.log("snake item no: ",i," coordinate y = ",segment.y)
+
+                        if (gameArea.horizont === true) {
+                            if(gameArea.direction === 1) {                               
+
+                                if( i === 0) {
+                                    gameArea.buforX = segment.x
+                                    gameArea.buforY = segment.y
+                                    segment.x += gameArea.segmentWidth
+                                    gameArea.resetCoordinates(segment)
+                                }
+                                else {
+                                    preBuforX = segment.x
+                                    preBuforY = segment.y
+                                    segment.x = gameArea.buforX
+                                    segment.y = gameArea.buforY
+                                    gameArea.buforX = preBuforX
+                                    gameArea.buforY = preBuforY
+                                    gameArea.resetCoordinates(segment)
+                                }
+                            }
+                            else
+                            {
+                                if( i === 0) {
+                                    gameArea.buforX = segment.x
+                                    gameArea.buforY = segment.y
+                                    segment.x -= gameArea.segmentWidth
+                                    gameArea.resetCoordinates(segment)
+                                }
+                                else {
+                                    preBuforX = segment.x
+                                    preBuforY = segment.y
+                                    segment.x = gameArea.buforX
+                                    segment.y = gameArea.buforY
+                                    gameArea.buforX = preBuforX
+                                    gameArea.buforY = preBuforY
+                                    gameArea.resetCoordinates(segment)
+                                }
+
+                            }
+
+                        }
+                        if (gameArea.horizont === false) {
+                            if(gameArea.direction === 1) {
+                                if( i === 0) {
+                                    gameArea.buforX = segment.x
+                                    gameArea.buforY = segment.y
+                                    segment.y += gameArea.segmentWidth
+                                    gameArea.resetCoordinates(segment)
+                                }
+                                else {
+                                    preBuforX = segment.x
+                                    preBuforY = segment.y
+                                    segment.x = gameArea.buforX
+                                    segment.y = gameArea.buforY
+                                    gameArea.buforX = preBuforX
+                                    gameArea.buforY = preBuforY
+                                    gameArea.resetCoordinates(segment)
+                                }
+
+                            }
+                            else
+                            {
+                                if( i === 0) {
+                                    gameArea.buforX = segment.x
+                                    gameArea.buforY = segment.y
+                                    segment.y -= gameArea.segmentWidth
+                                    gameArea.resetCoordinates(segment)
+                                }
+                                else {
+                                    preBuforX = segment.x
+                                    preBuforY = segment.y
+                                    segment.x = gameArea.buforX
+                                    segment.y = gameArea.buforY
+                                    gameArea.buforX = preBuforX
+                                    gameArea.buforY = preBuforY
+                                    gameArea.resetCoordinates(segment)
+                                }
+
+                            }
+                        }
+                    }
                 }
 
-            Timer {
+                function resetCoordinates(segment) {
+                        if(segment.x > gameArea.width - segment.width) {
+                            segment.x = 0
+                        }
+                        if(segment.x < 0) {
+                            segment.x = gameArea.width - segment.width
+                        }
+                        if(segment.y > gameArea.height - segment.height) {
+                            segment.y = 0
+                        }
+                        if(segment.y < 0) {
+                            segment.y = gameArea.height - segment.height
+                        }
 
-                id: snakeTimer
-                interval: 10
+                }
+
+                function colisionDetection() {
+
+                }
+
+//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------TIMER------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+            Timer {
+                interval: 200
                 repeat: true
                 running: true
-                onTriggered: {
-
-                    console.log("food component X: ",food.x); console.log("food component Y: ",food.y)
-                    console.log("snake component X: ",snake.x); console.log("snake component Y: ",snake.y)
-                    if(snake.horizont === true)  { Math.floor(snake.x += snake.direction) }
-                    if(snake.horizont === false) { Math.floor(snake.y += snake.direction) }
-                    if(snake.x > rec1.width - snake.width) {
-                        snake.x = 0
+                onTriggered: {                   
+                    gameArea.addSegment()
+                    gameArea.addFood()
+                    if(gameArea.segmentBeginNo >= gameArea.segmentNo ) gameArea.snakeMove()
+                    console.log("direction: ", gameArea.direction)
+                    console.log("horizont: ", gameArea.horizont)
                     }
-                    if(snake.x < 0) {
-                        snake.x = rec1.width - snake.width
-                    }
-                    if(snake.y > rec1.height - snake.height) {
-                        snake.y = 0
-                    }
-                    if(snake.y < 0) {
-                        snake.y = rec1.height - snake.height
-                    }
-
-                    if ( ( (snake.x + snake.width >= food.x) && (snake.x <=  food.x + food.width  ) )  &&
-                       ( ( snake.y + snake.height >= food.y) && ( snake.y <=  food.y + food.height  ) ) ) {
-                        foodLoader.destroy();
-                        console.log("destroy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
                 }
-
-
             }
-
-
-
-
         }
-
-
     }
 
 
-  }
 
-}
