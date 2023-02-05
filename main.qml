@@ -14,8 +14,8 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
     Rectangle {
         id: frame
-        width: Math.floor(mainWindow.width/1.25)
-        height: Math.floor(mainWindow.height)
+        width: Math.round(mainWindow.width/1.25)
+        height: Math.round(mainWindow.height)
         anchors.left: parent.left
         color: "blue"
 //-----------------------------------------------------------------------------------------------------------------------
@@ -23,15 +23,15 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
         Rectangle {
             id: gameArea
-            width: Math.floor(frame.width/1.06)
-            height: Math.floor(frame.height/1.08)
+            width: Math.round(frame.width/1.06)
+            height: Math.round(frame.height/1.08)
             anchors.centerIn: parent
             color: "steelblue"
             clip: true
 //-----------------------------------------------------------------------------------------------------------------------
 //------------------------------------------GLOBAL GAME VARIABLES BELOW:-------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-            property int segmentNo: 15                              // <- initial snake segments number to create
+            property int segmentNo: 7                              // <- initial snake segments number to create
             property int segmentBeginNo: 0                         // <- for initial snake creating purposes
             property double segmentWidth: gameArea.width/40
             property double segmentHeight: gameArea.height/35      // <- segment width/height are also food dimensions
@@ -42,7 +42,7 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------GAME CONTROL PROPERTIES-----------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-            property int direction: 1
+            property int direction: -1
             property bool horizont: true                           // true: move x, false move y
             focus: true
             Keys.onPressed: (event)=> {
@@ -66,13 +66,12 @@ ApplicationWindow {
                         let foodHeight = gameArea.segmentHeight
                         let hiXlimit = gameArea.width// - gameArea.segmentWidth
                         let hiYlimit = gameArea.height// - gameArea.segmentHeight
-                        let foodX = Math.round(Math.floor(Math.random() * (hiXlimit/gameArea.segmentWidth - 0)) * gameArea.segmentWidth) //+ gameArea.segmentWidth
-                        let foodY = Math.round(Math.floor(Math.random() * (hiYlimit/gameArea.segmentHeight - 0)) * gameArea.segmentHeight)// + gameArea.segmentHeight
+                        let foodX =/* Math.round */(Math.floor(Math.random() * (hiXlimit/gameArea.segmentWidth - 0)) * gameArea.segmentWidth) //+ gameArea.segmentWidth
+                        let foodY =/* Math.round */(Math.floor(Math.random() * (hiYlimit/gameArea.segmentHeight - 0)) * gameArea.segmentHeight)// + gameArea.segmentHeight
 
-                        //if ( (foodX % gameArea.segmentWidth === 0) && (foodY % gameArea.segmentHeight === 0) ) {
-                            food.append ({foodX,foodY})
-                            gameArea.foodNo ++
-                        //    }
+                        food.append ({foodX,foodY})
+                        gameArea.foodNo ++
+
                         console.log("foodX:      ", foodX)
                         console.log("foodY:      ", foodY)
                         console.log("hiXlimit:   ", hiXlimit)
@@ -103,10 +102,9 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: snake
-                    property int yCoordinate: Math.round(Math.floor (gameArea.height - (16 * gameArea.segmentHeight)) )
                     function raiseSnake() {
-                        let snakeX = Math.floor(gameArea.width/2 - ( gameArea.segmentBeginNo * gameArea.segmentWidth) )
-                        let snakeY = yCoordinate
+                        let snakeX = ( (gameArea.width/gameArea.segmentWidth)*10 ) - ( gameArea.segmentBeginNo * gameArea.segmentWidth)
+                        let snakeY = (gameArea.height/gameArea.segmentHeight)*10
                         snake.append({ snakeX, snakeY})
                         gameArea.segmentBeginNo ++
 
@@ -141,7 +139,7 @@ ApplicationWindow {
                 }
 //-----------------------------------------------------------------------------------------------------------------------
                 function addFood() {
-                    if (gameArea.foodNo < 5 ) {
+                    if (gameArea.foodNo < 5000 ) {
                         Qt.callLater(food.add)
                         console.log("food Number = ", gameArea.foodNo)
                     }
@@ -157,7 +155,7 @@ ApplicationWindow {
                         console.log("snake item no: ",i," coordinate y = ",segment.y)
 
                         if (gameArea.horizont === true) {
-                            if(gameArea.direction === 1) {                               
+                            if(gameArea.direction === 1) {
 
                                 if( i === 0) {
                                     gameArea.buforX = segment.x
@@ -253,9 +251,7 @@ ApplicationWindow {
                         }
 
                 }
-
                 function colisionDetection() {
-
                 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -267,8 +263,8 @@ ApplicationWindow {
                 running: true
                 onTriggered: {                   
                     gameArea.addSegment()
-                    gameArea.addFood()
-                    if(gameArea.segmentBeginNo >= gameArea.segmentNo ) gameArea.snakeMove()
+
+                    /*if(gameArea.segmentBeginNo >= gameArea.segmentNo )*/  gameArea.snakeMove() ; gameArea.addFood()
                     console.log("direction: ", gameArea.direction)
                     console.log("horizont: ", gameArea.horizont)
                     }
