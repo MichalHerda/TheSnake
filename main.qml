@@ -7,8 +7,8 @@ import "jsBackEnd.js" as Js
 //-----------------------------------------------------------------------------------------------------------------------
 ApplicationWindow {
     id: mainWindow
-    width: 1280
-    height: 960
+    width: Screen.width
+    height: Screen.height
     visible: true
     title: qsTr("Snake")
     color: "black"
@@ -29,27 +29,10 @@ ApplicationWindow {
             property int direction: -1
             property bool horizont: true                           // true: move x, false move y
 //-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------GAME FUNCTIONS---------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-            function addSegment() {
-                if (segmentBeginNo < segmentNo) {
-                    Qt.callLater(snake.raiseSnake)
-                    console.log("segmentNo = ", segmentBeginNo)
-                }
-            }
-//-----------------------------------------------------------------------------------------------------------------------
-            function addFood() {
-                if (foodNo < 5000 ) {
-                    Qt.callLater(food.add)
-                    console.log("food Number = ", foodNo)
-                }
-            }
-//-----------------------------------------------------------------------------------------------------------------------
     Rectangle {
         id: frame
-        width: Math.round(mainWindow.width/1.25)
-        height: Math.round(mainWindow.height)
+        width: Math.floor(mainWindow.width/1.25)
+        height: Math.floor(mainWindow.height)
         anchors.left: parent.left
         color: "blue"
 //-----------------------------------------------------------------------------------------------------------------------
@@ -57,8 +40,8 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
         Rectangle {
             id: gameArea
-            width: Math.round(frame.width/1.06)
-            height: Math.round(frame.height/1.08)
+            width: Math.floor(frame.width/1.06)
+            height: Math.floor(frame.height/1.08)
             anchors.centerIn: parent
             color: "steelblue"
             clip: true
@@ -79,14 +62,13 @@ ApplicationWindow {
 //-----------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: food
-
                     function add() {
                         let foodWidth = segmentWidth
                         let foodHeight = segmentHeight
                         let hiXlimit = gameArea.width
                         let hiYlimit = gameArea.height
-                        let foodX = (Math.floor(Math.random() * (hiXlimit/segmentWidth - 0)) * segmentWidth)
-                        let foodY = (Math.floor(Math.random() * (hiYlimit/segmentHeight - 0)) * segmentHeight)
+                        let foodX = (Math.floor(Math.random() * (hiXlimit/segmentWidth - 0)) * (segmentWidth))
+                        let foodY = (Math.floor(Math.random() * (hiYlimit/segmentHeight - 0)) * (segmentHeight))
 
                         food.append ({foodX,foodY})
                         foodNo ++
@@ -123,7 +105,7 @@ ApplicationWindow {
                     id: snake
                     function raiseSnake() {
                         let snakeX = ( (gameArea.width/segmentWidth)*10 ) - ( segmentBeginNo * segmentWidth)
-                        let snakeY = (gameArea.height/segmentHeight)*10
+                        let snakeY = ( gameArea.height/segmentHeight)*10
                         snake.append({ snakeX, snakeY})
                         segmentBeginNo ++
 
@@ -150,13 +132,13 @@ ApplicationWindow {
 //------------------------------------------------------TIMER------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
             Timer {
-                interval: 200
+                interval: 1
                 repeat: true
                 running: true
                 onTriggered: {
-                    addSegment();
+                    Js.addSegment(snake, segmentNo, segmentBeginNo);
                     Js.snakeMove(segmentNo, snakeRepeater, horizont, direction);
-                    addFood();
+                    Js.addFood(food, foodNo);
                     console.log("direction: ", direction);
                     console.log("horizont: ", horizont);
                     }
