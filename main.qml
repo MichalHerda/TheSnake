@@ -1,10 +1,10 @@
-import QtQuick 2.15
+﻿import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.5
 import "jsBackEnd.js" as Js
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------MAIN WINDOW AND FRAME---------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------MAIN WINDOW AND FRAME---------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
 ApplicationWindow {
     id: mainWindow
     width: Screen.width
@@ -13,21 +13,28 @@ ApplicationWindow {
     title: qsTr("Snake")
     color: "black"
 //-----------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------ARRAYS FOR GAME COORDINATES-------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+    property int xCooNumber: 40
+    property int yCooNumber: 35
+    property variant xCoo: Js.xCooFill(gameArea, xCooNumber)
+    property variant yCoo: Js.yCooFill(gameArea, yCooNumber)
+//-----------------------------------------------------------------------------------------------------------------------
 //------------------------------------------GLOBAL GAME VARIABLES BELOW:-------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-            property int segmentNo: 7                              // <- initial snake segments number to create
-            property int segmentBeginNo: 0                         // <- for initial snake creating purposes
-            property double segmentWidth: gameArea.width/40
-            property double segmentHeight: gameArea.height/35      // <- segment width/height are also food dimensions
-            property int foodNo: 0                                 // <- initial food Number
+    property int segmentNo: 7                                           // <- initial snake segments number to create
+    property int segmentBeginNo: 0                                      // <- for initial snake creating purposes
+    property double segmentWidth: gameArea.width/xCooNumber
+    property double segmentHeight: gameArea.height/yCooNumber           // <- segment width/height are also food dimensions
+    property int foodNo: 0                                              // <- initial food Number
 //-----------------------------------------------------------------------------------------------------------------------
-            property int buforX: 0                                 // <- bufor variables for moving snake purposes
-            property int buforY: 0
+    property int buforX: 0                                              // <- bufor variables for moving snake purposes
+    property int buforY: 0
 //-----------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------GAME CONTROL PROPERTIES-----------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
-            property int direction: -1
-            property bool horizont: true                           // true: move x, false move y
+    property int direction: -1
+    property bool horizont: true                                        // true: move x, false move y
 //-----------------------------------------------------------------------------------------------------------------------
     Rectangle {
         id: frame
@@ -72,7 +79,7 @@ ApplicationWindow {
 
                         food.append ({foodX,foodY})
                         foodNo ++
-
+/*
                         console.log("foodX:      ", foodX)
                         console.log("foodY:      ", foodY)
                         console.log("hiXlimit:   ", hiXlimit)
@@ -80,7 +87,7 @@ ApplicationWindow {
                         console.log("gameArea W: ", gameArea.width)
                         console.log("gameArea H  ", gameArea.height)
                         console.log("segment W:  ", segmentWidth)
-                        console.log("segment H:  ", segmentHeight)
+                        console.log("segment H:  ", segmentHeight)   */
                     }
                     Component.onCompleted: add()
                 }
@@ -105,12 +112,12 @@ ApplicationWindow {
                     id: snake
                     function raiseSnake() {
                         let snakeX = ( (gameArea.width/segmentWidth)*10 ) - ( segmentBeginNo * segmentWidth)
-                        let snakeY = ( gameArea.height/segmentHeight)*10
+                        let snakeY = ( (gameArea.height/segmentHeight)*10 )
                         snake.append({ snakeX, snakeY})
                         segmentBeginNo ++
 
-                        console.log("snakeX: ",snakeX)
-                        console.log("snakeY: ",snakeY)
+                        //console.log("snakeX: ",snakeX)
+                        //console.log("snakeY: ",snakeY)
                     }
                     Component.onCompleted: raiseSnake()
                 }
@@ -132,17 +139,23 @@ ApplicationWindow {
 //------------------------------------------------------TIMER------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
             Timer {
-                interval: 1
+                interval: 100
                 repeat: true
                 running: true
                 onTriggered: {
-                    Js.addSegment(snake, segmentNo, segmentBeginNo);
-                    Js.snakeMove(segmentNo, snakeRepeater, horizont, direction);
+                    Js.addSegment(snake, segmentNo, segmentBeginNo);                   
                     Js.addFood(food, foodNo);
-                    console.log("direction: ", direction);
-                    console.log("horizont: ", horizont);
+                    Js.snakeMove(segmentNo, snakeRepeater, horizont, direction);
+                    //console.log("direction: ", direction);
+                    //console.log("horizont: ", horizont);
+                    //console.log("xCoo: ",xCoo);
                     }
                 }
             }
+        Component.onCompleted: {
+            Js.xCooFill(gameArea, xCooNumber)
+            Js.yCooFill(gameArea, yCooNumber)
+        }
+
         }
     }
