@@ -26,49 +26,56 @@
         console.log("yCoo: ", yCoo);
         return yCoo;
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    function rndGenerator (itemsNo) {
+        let rndNo = Math.floor(Math.random() * (itemsNo - 0));
+        console.log("Inside rndGenerator(), itemsNo = ",itemsNo);
+        console.log("Inside rndGenerator(), rndNo = ",rndNo);
+        return rndNo;
+    }
 //*******************************************************************************************************************************************
 //-------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------GAME FUNCTIONS--------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------
 //*******************************************************************************************************************************************
 //-------------------------------------------------------------------------------------------------------------------------------------------
-    function addSegment(snake, segmentNo, segmentBeginNo) {
+    function addSegment(xCoo, yCoo, snake, segmentNo, segmentBeginNo) {
         if (segmentBeginNo < segmentNo) {
-            snake.raiseSnake()
-            //console.log("segmentNo = ", segmentBeginNo)
+            raiseSnake(xCoo, yCoo, segmentBeginNo);
+            //console.log("segmentNo = ", segmentBeginNo);
         }
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------
-    function addFood(food, foodNo) {
-        if (foodNo < 500 ) {
-            Qt.callLater(food.add)
-            //console.log("food Number = ", foodNo)
+    function addFood(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo) {
+        if (foodNo < 5000 ) {
+            add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo);
+            //console.log("food Number = ", foodNo);
         }
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------
    function resetCoordinates(segment, gameArea) {
            if(segment.x > gameArea.width - segment.width) {                                 // this function checks if snake moves
-               segment.x = 0                                                                // outside gameArae
-           }                                                                                // and reset coordinates if does
+               segment.x = 0;                                                               // outside gameArae
+           }                                                                                // and change coordinates if does
            if(segment.x < 0) {
-               segment.x = gameArea.width - segment.width
+               segment.x = gameArea.width - segment.width;
            }
            if(segment.y > gameArea.height - segment.height) {
-               segment.y = 0
+               segment.y = 0;
            }
            if(segment.y < 0) {
-               segment.y = gameArea.height - segment.height
+               segment.y = gameArea.height - segment.height;
            }
    }
 //------------------------------------------------------------------------------------------------------------------------------------------
    function snakeMove(segmentNo, snakeRepeater, horizont, direction) {
-       var preBuforX = 0
-       var preBuforY = 0
+       var preBuforX = 0;
+       var preBuforY = 0;
 
        for (let i = 0; i < segmentNo; i ++) {
-           var segment = snakeRepeater.itemAt(i)
-           //console.log("snake item no: ",i," coordinate x = ",segment.x)
-           //console.log("snake item no: ",i," coordinate y = ",segment.y)
+           var segment = snakeRepeater.itemAt(i);
+           //console.log("snake item no: ",i," coordinate x = ",segment.x);
+           //console.log("snake item no: ",i," coordinate y = ",segment.y);
 
            if (horizont === true) {                                                         // moving vertically
 
@@ -76,33 +83,33 @@
                if(direction === 1) {                                                        // move right
 
                    if( i === 0) {
-                       buforX = segment.x
-                       buforY = segment.y
-                       segment.x += segmentWidth
+                       buforX = segment.x;
+                       buforY = segment.y;
+                       segment.x += segmentWidth;
                    }
                    else {
-                       preBuforX = segment.x
-                       preBuforY = segment.y
-                       segment.x = buforX
-                       segment.y = buforY
-                       buforX = preBuforX
-                       buforY = preBuforY
+                       preBuforX = segment.x;
+                       preBuforY = segment.y;
+                       segment.x = buforX;
+                       segment.y = buforY;
+                       buforX = preBuforX;
+                       buforY = preBuforY;
                    }
                }
                else                                                                         // move left
                {
                    if( i === 0) {
-                       buforX = segment.x
-                       buforY = segment.y
-                       segment.x -= segmentWidth
+                       buforX = segment.x;
+                       buforY = segment.y;
+                       segment.x -= segmentWidth;
                    }
                    else {
-                       preBuforX = segment.x
-                       preBuforY = segment.y
-                       segment.x = buforX
-                       segment.y = buforY
-                       buforX = preBuforX
-                       buforY = preBuforY
+                       preBuforX = segment.x;
+                       preBuforY = segment.y;
+                       segment.x = buforX;
+                       segment.y = buforY;
+                       buforX = preBuforX;
+                       buforY = preBuforY;
                    }
                }
            }
@@ -110,37 +117,37 @@
 
                if(direction === 1) {                                                        // move down
                    if( i === 0) {
-                       buforX = segment.x
-                       buforY = segment.y
-                       segment.y += segmentWidth
+                       buforX = segment.x;
+                       buforY = segment.y;
+                       segment.y += segmentWidth;
                    }
                    else {
-                       preBuforX = segment.x
-                       preBuforY = segment.y
-                       segment.x = buforX
-                       segment.y = buforY
-                       buforX = preBuforX
-                       buforY = preBuforY
+                       preBuforX = segment.x;
+                       preBuforY = segment.y;
+                       segment.x = buforX;
+                       segment.y = buforY;
+                       buforX = preBuforX;
+                       buforY = preBuforY;
                    }
                }
                else                                                                         //move up
                {
                    if( i === 0) {
-                       buforX = segment.x
-                       buforY = segment.y
-                       segment.y -= segmentWidth
+                       buforX = segment.x;
+                       buforY = segment.y;
+                       segment.y -= segmentWidth;
                    }
                    else {
-                       preBuforX = segment.x
-                       preBuforY = segment.y
-                       segment.x = buforX
-                       segment.y = buforY
-                       buforX = preBuforX
-                       buforY = preBuforY
+                       preBuforX = segment.x;
+                       preBuforY = segment.y;
+                       segment.x = buforX;
+                       segment.y = buforY;
+                       buforX = preBuforX;
+                       buforY = preBuforY;
                    }
                }
            }
-           resetCoordinates(segment, gameArea)
+           resetCoordinates(segment, gameArea);
        }
    }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -152,3 +159,34 @@
 
    }
 //-------------------------------------------------------------------------------------------------------------------------------------------
+    function add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo) {
+        //let foodWidth = segmentWidth
+        //let foodHeight = segmentHeight
+        //let hiXlimit = gameArea.width
+        //let hiYlimit = gameArea.height
+        //let foodX = (Math.floor(Math.random() * (hiXlimit/segmentWidth - 0)) * (segmentWidth))
+        //let foodY = (Math.floor(Math.random() * (hiYlimit/segmentHeight - 0)) * (segmentHeight))
+        let foodX = xCoo[Js.rndGenerator(xCooNumber)]
+        let foodY = yCoo[Js.rndGenerator(yCooNumber)]
+
+        food.append ({foodX,foodY})
+        foodNo ++
+        console.log("foodX:      ", foodX)
+        console.log("foodY:      ", foodY)
+    /*                      console.log("hiXlimit:   ", hiXlimit)
+        console.log("hiYlimit:   ", hiYlimit)
+        console.log("gameArea W: ", gameArea.width)
+        console.log("gameArea H  ", gameArea.height)
+        console.log("segment W:  ", segmentWidth)
+        console.log("segment H:  ", segmentHeight)   */
+    }
+//---------------------------------------------------------------------------------------------------------------------------------------------
+    function raiseSnake(xCoo, yCoo, segmentBeginNo) {
+        let snakeX = xCoo [12]                      //( (gameArea.width/segmentWidth)*10 ) - ( segmentBeginNo * segmentWidth)
+        let snakeY = yCoo [8]                       //( (gameArea.height/segmentHeight)*10 )
+        snake.append({ snakeX, snakeY})
+        segmentBeginNo ++
+        //console.log("snakeX: ",snakeX)
+        //console.log("snakeY: ",snakeY)
+    }
+//---------------------------------------------------------------------------------------------------------------------------------------------

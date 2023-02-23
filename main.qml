@@ -2,51 +2,52 @@
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.5
 import "jsBackEnd.js" as Js
-//-------------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------MAIN WINDOW AND FRAME---------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------MAIN WINDOW AND FRAME----------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
 ApplicationWindow {
     id: mainWindow
-    width: Screen.width
-    height: Screen.height
+    width: 900
+    height: 640
     visible: true
     title: qsTr("Snake")
     color: "black"
-//-----------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------ARRAYS FOR GAME COORDINATES-------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-    property int xCooNumber: 40
-    property int yCooNumber: 35
-    property variant xCoo: Js.xCooFill(gameArea, xCooNumber)
-    property variant yCoo: Js.yCooFill(gameArea, yCooNumber)
-//-----------------------------------------------------------------------------------------------------------------------
-//------------------------------------------GLOBAL GAME VARIABLES BELOW:-------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-    property int segmentNo: 7                                           // <- initial snake segments number to create
-    property int segmentBeginNo: 0                                      // <- for initial snake creating purposes
+//------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------ARRAYS FOR GAME COORDINATES------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+    property int xCooNumber: 34;                                    // number of pixels X Size/ xCoo Size
+    property int yCooNumber: 28;                                    // number of pixels Y Size/ yCoo Size
+    property variant xCoo: Js.xCooFill(gameArea, xCooNumber)        // fill X Size array
+    property variant yCoo: Js.yCooFill(gameArea, yCooNumber)        // fill Y Size array
+//------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------GLOBAL GAME VARIABLES BELOW------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+    property int segmentNo: 7                                       // initial snake segments number to create
+    property int segmentBeginNo: 0                                  // for initial snake creating purposes
     property double segmentWidth: gameArea.width/xCooNumber
-    property double segmentHeight: gameArea.height/yCooNumber           // <- segment width/height are also food dimensions
-    property int foodNo: 0                                              // <- initial food Number
-//-----------------------------------------------------------------------------------------------------------------------
-    property int buforX: 0                                              // <- bufor variables for moving snake purposes
+    property double segmentHeight: gameArea.height/yCooNumber       // segment width/height are also food dimensions
+    property int foodNo: 0                                          // initial food Number
+//------------------------------------------------------------------------------------------------------------------------------------------
+    property int buforX: 0                                          // bufor variables for moving snake purposes
     property int buforY: 0
-//-----------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------GAME CONTROL PROPERTIES-----------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-    property int direction: -1
-    property bool horizont: true                                        // true: move x, false move y
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------GAME CONTROL PROPERTIES--------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+    property int direction: -1                                      // (1): right/down, (-1): left, up
+    property bool horizont: true                                    // true: move x, false move y
+//------------------------------------------------------------------------------------------------------------------------------------------
     Rectangle {
-        id: frame
+        id: frame                                                   // only esthetic function
         width: Math.floor(mainWindow.width/1.25)
         height: Math.floor(mainWindow.height)
         anchors.left: parent.left
         color: "blue"
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------GAME AREA---------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
+        clip: true
+//------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------GAME AREA---------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
         Rectangle {
-            id: gameArea
+            id: gameArea                                            // as the item's ID says
             width: Math.floor(frame.width/1.06)
             height: Math.floor(frame.height/1.08)
             anchors.centerIn: parent
@@ -54,7 +55,7 @@ ApplicationWindow {
             clip: true
 
             focus: true
-            Keys.onPressed: (event)=> {
+            Keys.onPressed: (event)=> {                             // snake control function
                     if (event.key === Qt.Key_Left)
                         {direction = -1; horizont = true}
                     if (event.key === Qt.Key_Right)
@@ -64,34 +65,14 @@ ApplicationWindow {
                     if (event.key === Qt.Key_Down)
                         {direction = 1; horizont = false}
                 }
-//-----------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------FOOD ELEMENT----------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------FOOD ELEMENT---------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: food
-                    function add() {
-                        let foodWidth = segmentWidth
-                        let foodHeight = segmentHeight
-                        let hiXlimit = gameArea.width
-                        let hiYlimit = gameArea.height
-                        let foodX = (Math.floor(Math.random() * (hiXlimit/segmentWidth - 0)) * (segmentWidth))
-                        let foodY = (Math.floor(Math.random() * (hiYlimit/segmentHeight - 0)) * (segmentHeight))
-
-                        food.append ({foodX,foodY})
-                        foodNo ++
-/*
-                        console.log("foodX:      ", foodX)
-                        console.log("foodY:      ", foodY)
-                        console.log("hiXlimit:   ", hiXlimit)
-                        console.log("hiYlimit:   ", hiYlimit)
-                        console.log("gameArea W: ", gameArea.width)
-                        console.log("gameArea H  ", gameArea.height)
-                        console.log("segment W:  ", segmentWidth)
-                        console.log("segment H:  ", segmentHeight)   */
-                    }
-                    Component.onCompleted: add()
+                    Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo)
                 }
-//----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
                         id: foodRepeater
                         model: food
@@ -102,26 +83,17 @@ ApplicationWindow {
                             width: segmentWidth
                             height: segmentHeight
                             color: "chartreuse"
-                            border {color: "darkviolet"; width: Math.floor(foodRec.width/10)}
+                            border {color: "darkviolet"; width: foodRec.width/10 }
                         }
                     }
-//-----------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------SNAKE ELEMENT----------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------SNAKE ELEMENT--------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: snake
-                    function raiseSnake() {
-                        let snakeX = ( (gameArea.width/segmentWidth)*10 ) - ( segmentBeginNo * segmentWidth)
-                        let snakeY = ( (gameArea.height/segmentHeight)*10 )
-                        snake.append({ snakeX, snakeY})
-                        segmentBeginNo ++
-
-                        //console.log("snakeX: ",snakeX)
-                        //console.log("snakeY: ",snakeY)
-                    }
-                    Component.onCompleted: raiseSnake()
+                    Component.onCompleted: Js.raiseSnake(xCoo, yCoo, segmentBeginNo)
                 }
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
                         id: snakeRepeater
                         model: snake
@@ -132,19 +104,19 @@ ApplicationWindow {
                             width: segmentWidth
                             height: segmentHeight
                             color: "red"
-                            border {color: "darkviolet"; width: Math.floor(snakeRec.width/10)}
+                            border {color: "darkviolet"; width: snakeRec.width/10 }
                         }
                     }
-//-----------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------TIMER------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------TIMER-------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
             Timer {
-                interval: 100
+                interval: 250
                 repeat: true
                 running: true
                 onTriggered: {
-                    Js.addSegment(snake, segmentNo, segmentBeginNo);                   
-                    Js.addFood(food, foodNo);
+                    Js.addSegment(xCoo, yCoo, snake, segmentNo, segmentBeginNo);
+                    Js.addFood(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo);
                     Js.snakeMove(segmentNo, snakeRepeater, horizont, direction);
                     //console.log("direction: ", direction);
                     //console.log("horizont: ", horizont);
@@ -155,7 +127,6 @@ ApplicationWindow {
         Component.onCompleted: {
             Js.xCooFill(gameArea, xCooNumber)
             Js.yCooFill(gameArea, yCooNumber)
-        }
-
+            }
         }
     }
