@@ -15,29 +15,30 @@ ApplicationWindow {
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------ARRAYS FOR GAME COORDINATES------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
-    property int xCooNumber: 34;                                    // number of pixels X Size/ xCoo Size
-    property int yCooNumber: 28;                                    // number of pixels Y Size/ yCoo Size
-    property variant xCoo: Js.xCooFill(gameArea, xCooNumber)        // fill X Size array
-    property variant yCoo: Js.yCooFill(gameArea, yCooNumber)        // fill Y Size array
+    property int xCooNumber: 36                                                         // number of pixels X Size/ xCoo Size
+    property int yCooNumber: 30                                                         // number of pixels Y Size/ yCoo Size
+    property variant xCoo: Js.xCooFill(gameArea, xCooNumber)                            // fill X Size array
+    property variant yCoo: Js.yCooFill(gameArea, yCooNumber)                            // fill Y Size array
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------GLOBAL GAME VARIABLES BELOW------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
-    property int segmentNo: 7                                       // initial snake segments number to create
-    property int segmentBeginNo: 0                                  // for initial snake creating purposes
+    property int segmentNo: 7                                                           // initial snake segments number to create
+    property int segmentBeginNo: 0                                                      // for initial snake creating purposes
     property double segmentWidth: gameArea.width/xCooNumber
-    property double segmentHeight: gameArea.height/yCooNumber       // segment width/height are also food dimensions
-    property int foodNo: 0                                          // initial food Number
+    property double segmentHeight: gameArea.height/yCooNumber                           // segment width/height are also food dimensions
+    property int foodBeginNo: 0                                                         // initial food Number
+    property int foodNo: 50                                                             // maximum food Number
 //------------------------------------------------------------------------------------------------------------------------------------------
-    property int buforX: 0                                          // bufor variables for moving snake purposes
+    property int buforX: 0                                                              // bufor variables for moving snake purposes
     property int buforY: 0
 //------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------GAME CONTROL PROPERTIES--------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
-    property int direction: -1                                      // (1): right/down, (-1): left, up
-    property bool horizont: true                                    // true: move x, false move y
+    property bool direction: true                                                       // true: right||down,  false: left||up
+    property bool horizont:  true                                                       // true: move xDim,    false: move yDim
 //------------------------------------------------------------------------------------------------------------------------------------------
     Rectangle {
-        id: frame                                                   // only esthetic function
+        id: frame                                                                       // frame is only for esthetic functions
         width: Math.floor(mainWindow.width/1.25)
         height: Math.floor(mainWindow.height)
         anchors.left: parent.left
@@ -47,7 +48,7 @@ ApplicationWindow {
 //------------------------------------------------------------GAME AREA---------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
         Rectangle {
-            id: gameArea                                            // as the item's ID says
+            id: gameArea                                                                // function as the item's ID says
             width: Math.floor(frame.width/1.06)
             height: Math.floor(frame.height/1.08)
             anchors.centerIn: parent
@@ -55,26 +56,26 @@ ApplicationWindow {
             clip: true
 
             focus: true
-            Keys.onPressed: (event)=> {                             // snake control function
+            Keys.onPressed: (event)=> {                                                 // snake control function
                     if (event.key === Qt.Key_Left)
-                        {direction = -1; horizont = true}
+                        {direction = false; horizont = true}
                     if (event.key === Qt.Key_Right)
-                        {direction = 1; horizont = true}
+                        {direction = true; horizont = true}
                     if (event.key === Qt.Key_Up)
-                        {direction = -1; horizont = false}
+                        {direction = false; horizont = false}
                     if (event.key === Qt.Key_Down)
-                        {direction = 1; horizont = false}
+                        {direction = true; horizont = false}
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------FOOD ELEMENT---------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: food
-                    Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo)
+                    Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
-                        id: foodRepeater
+                        id: foodRepeater                                                // food items
                         model: food
                         delegate: Rectangle {
                             id: foodRec
@@ -91,12 +92,12 @@ ApplicationWindow {
 //------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: snake
-                    Component.onCompleted: Js.raiseSnake(xCoo, yCoo, segmentBeginNo)
+                    Component.onCompleted: Js.raiseSnake(xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth)
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
                         id: snakeRepeater
-                        model: snake
+                        model: snake                                                    // snake item
                         delegate: Rectangle {
                             id: snakeRec
                             x: snakeX
@@ -110,23 +111,19 @@ ApplicationWindow {
 //------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------TIMER-------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
-            Timer {
-                interval: 250
-                repeat: true
-                running: true
-                onTriggered: {
-                    Js.addSegment(xCoo, yCoo, snake, segmentNo, segmentBeginNo);
-                    Js.addFood(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo);
-                    Js.snakeMove(segmentNo, snakeRepeater, horizont, direction);
-                    //console.log("direction: ", direction);
-                    //console.log("horizont: ", horizont);
-                    //console.log("xCoo: ",xCoo);
-                    }
+        Timer {
+            interval: 200
+            repeat: true
+            running: true
+            onTriggered: {
+                Js.snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight);
                 }
             }
-        Component.onCompleted: {
-            Js.xCooFill(gameArea, xCooNumber)
-            Js.yCooFill(gameArea, yCooNumber)
-            }
+        }                                                                               // game area brace
+    Component.onCompleted: {
+        Js.xCooFill(gameArea, xCooNumber)
+        Js.yCooFill(gameArea, yCooNumber)
         }
-    }
+    }                                                                                   // frame brace
+}
+//------------------------------------------------------------------------------------------------------------------------------------------

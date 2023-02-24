@@ -3,84 +3,65 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------
     function xCooFill(gameArea, xCooNumber) {
         xCoo = [];                                                                          // reset
-        let xCooSize = gameArea.width/xCooNumber;
-        console.log("gameArea.width = ", gameArea.width);
-        console.log("xCoSize = ", xCooSize);
-        for(let i = 0; i < xCooNumber; i++) {
-            let xCoordinate = i * xCooSize;
-            xCoo.push(xCoordinate);
-        }
-        console.log("xCoo: ", xCoo);
+        let xCooSize = gameArea.width/xCooNumber;                                           // calculate "pixel" size
+            for(let i = 0; i < xCooNumber; i++) {                                           // fill array
+                xCoo.push (i * xCooSize);
+            }
         return xCoo;
     }
 //------------------------------------------------------------------------------------------------------------------------------------------
     function yCooFill(gameArea, yCooNumber) {
-        yCoo = [];
-        let yCooSize = gameArea.height/yCooNumber;
-        console.log("gameArea.height = ", gameArea.height);
-        console.log("yCoSize = ", yCooSize);
-        for(let i = 0; i < yCooNumber; i++) {
-            let yCoordinate = i * yCooSize;
-            yCoo.push(yCoordinate);
-        }
-        console.log("yCoo: ", yCoo);
+        yCoo = [];                                                                          // this is sister function
+        let yCooSize = gameArea.height/yCooNumber;                                          // of xCooFill
+            for(let i = 0; i < yCooNumber; i++) {                                           // perhaps they would be merged in future
+                yCoo.push (i * yCooSize);
+            }
         return yCoo;
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------
     function rndGenerator (itemsNo) {
-        let rndNo = Math.floor(Math.random() * (itemsNo - 0));
-        console.log("Inside rndGenerator(), itemsNo = ",itemsNo);
-        console.log("Inside rndGenerator(), rndNo = ",rndNo);
-        return rndNo;
+        let rndNo = Math.floor(Math.random() * (itemsNo - 0));                              // function generates random number
+        return rndNo;                                                                       // in range: ( 0 - itemsNo )
     }
-//*******************************************************************************************************************************************
+//-------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------FUNCTIONS TO FILL QML LIST MODELS IN REPEATERS------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    function add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo) {
+        for (let i = 0; i < foodNo; i++) {
+            let foodX = xCoo[Js.rndGenerator(xCooNumber)];
+            let foodY = yCoo[Js.rndGenerator(yCooNumber)];
+
+            food.append ({foodX,foodY});
+            foodBeginNo ++;
+            console.log("foodX:      ", foodX);
+            console.log("foodY:      ", foodY);
+            console.log("Add food    ");
+        }
+    }
+//---------------------------------------------------------------------------------------------------------------------------------------------
+    function raiseSnake(xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth) {
+        for (let i = 0; i < segmentNo; i++) {
+            let snakeX = xCoo [Math.floor(xCooNumber/2.5)] - (segmentBeginNo * segmentWidth);
+            let snakeY = yCoo [Math.floor(yCooNumber/2)];
+            snake.append({ snakeX, snakeY});
+            segmentBeginNo ++;
+            console.log("Add segment    ");
+            console.log("snakeX: ",snakeX)
+            console.log("snakeY: ",snakeY)
+        }
+    }
 //-------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------GAME FUNCTIONS--------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------------------------------
-//*******************************************************************************************************************************************
-//-------------------------------------------------------------------------------------------------------------------------------------------
-    function addSegment(xCoo, yCoo, snake, segmentNo, segmentBeginNo) {
-        if (segmentBeginNo < segmentNo) {
-            raiseSnake(xCoo, yCoo, segmentBeginNo);
-            //console.log("segmentNo = ", segmentBeginNo);
-        }
-    }
-//-------------------------------------------------------------------------------------------------------------------------------------------
-    function addFood(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo) {
-        if (foodNo < 5000 ) {
-            add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo);
-            //console.log("food Number = ", foodNo);
-        }
-    }
-//-------------------------------------------------------------------------------------------------------------------------------------------
-   function resetCoordinates(segment, gameArea) {
-           if(segment.x > gameArea.width - segment.width) {                                 // this function checks if snake moves
-               segment.x = 0;                                                               // outside gameArae
-           }                                                                                // and change coordinates if does
-           if(segment.x < 0) {
-               segment.x = gameArea.width - segment.width;
-           }
-           if(segment.y > gameArea.height - segment.height) {
-               segment.y = 0;
-           }
-           if(segment.y < 0) {
-               segment.y = gameArea.height - segment.height;
-           }
-   }
-//------------------------------------------------------------------------------------------------------------------------------------------
-   function snakeMove(segmentNo, snakeRepeater, horizont, direction) {
-       var preBuforX = 0;
-       var preBuforY = 0;
+//-------------------------------------------------------------------------------------------------------------------------------------------  
+   function snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight) {
+       let preBuforX = 0;
+       let preBuforY = 0;
 
        for (let i = 0; i < segmentNo; i ++) {
            var segment = snakeRepeater.itemAt(i);
-           //console.log("snake item no: ",i," coordinate x = ",segment.x);
-           //console.log("snake item no: ",i," coordinate y = ",segment.y);
 
            if (horizont === true) {                                                         // moving vertically
-
-
-               if(direction === 1) {                                                        // move right
+               if(direction === true) {                                                     // move right
 
                    if( i === 0) {
                        buforX = segment.x;
@@ -114,12 +95,11 @@
                }
            }
            if (horizont === false) {                                                        // moving horizontally
-
-               if(direction === 1) {                                                        // move down
+               if(direction === true) {                                                     // move down
                    if( i === 0) {
                        buforX = segment.x;
                        buforY = segment.y;
-                       segment.y += segmentWidth;
+                       segment.y += segmentHeight;
                    }
                    else {
                        preBuforX = segment.x;
@@ -135,7 +115,7 @@
                    if( i === 0) {
                        buforX = segment.x;
                        buforY = segment.y;
-                       segment.y -= segmentWidth;
+                       segment.y -= segmentHeight;
                    }
                    else {
                        preBuforX = segment.x;
@@ -151,42 +131,28 @@
        }
    }
 //------------------------------------------------------------------------------------------------------------------------------------------
-   function pushSnakeForward (preBuforX, preBuforY, segment, buforX, buforY ) {
+function resetCoordinates(segment, gameArea) {
+        if(segment.x > gameArea.width - segment.width) {                                 // this function checks if snake goes
+            segment.x = 0;                                                               // outside gameArae
+        }                                                                                // and change coordinates if does
+        if(segment.x < 0) {
+            segment.x = gameArea.width - segment.width;
+        }
+        if(segment.y > gameArea.height - segment.height) {
+            segment.y = 0;
+        }
+        if(segment.y < 0) {
+            segment.y = gameArea.height - segment.height;
+        }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
+  function pushSnakeForward (preBuforX, preBuforY, segment, buforX, buforY ) {
 
    }
-//-------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------
    function colisionDetection() {
 
    }
-//-------------------------------------------------------------------------------------------------------------------------------------------
-    function add(xCoo, yCoo, xCooNumber, yCooNumber, foodNo) {
-        //let foodWidth = segmentWidth
-        //let foodHeight = segmentHeight
-        //let hiXlimit = gameArea.width
-        //let hiYlimit = gameArea.height
-        //let foodX = (Math.floor(Math.random() * (hiXlimit/segmentWidth - 0)) * (segmentWidth))
-        //let foodY = (Math.floor(Math.random() * (hiYlimit/segmentHeight - 0)) * (segmentHeight))
-        let foodX = xCoo[Js.rndGenerator(xCooNumber)]
-        let foodY = yCoo[Js.rndGenerator(yCooNumber)]
+//------------------------------------------------------------------------------------------------------------------------------------------
 
-        food.append ({foodX,foodY})
-        foodNo ++
-        console.log("foodX:      ", foodX)
-        console.log("foodY:      ", foodY)
-    /*                      console.log("hiXlimit:   ", hiXlimit)
-        console.log("hiYlimit:   ", hiYlimit)
-        console.log("gameArea W: ", gameArea.width)
-        console.log("gameArea H  ", gameArea.height)
-        console.log("segment W:  ", segmentWidth)
-        console.log("segment H:  ", segmentHeight)   */
-    }
-//---------------------------------------------------------------------------------------------------------------------------------------------
-    function raiseSnake(xCoo, yCoo, segmentBeginNo) {
-        let snakeX = xCoo [12]                      //( (gameArea.width/segmentWidth)*10 ) - ( segmentBeginNo * segmentWidth)
-        let snakeY = yCoo [8]                       //( (gameArea.height/segmentHeight)*10 )
-        snake.append({ snakeX, snakeY})
-        segmentBeginNo ++
-        //console.log("snakeX: ",snakeX)
-        //console.log("snakeY: ",snakeY)
-    }
-//---------------------------------------------------------------------------------------------------------------------------------------------
+
