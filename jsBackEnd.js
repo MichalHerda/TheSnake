@@ -42,7 +42,7 @@
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-    function raiseSnake(xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth) {
+    function raiseSnake(snake, xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth) {
         for (let i = 0; i < segmentNo; i++) {
             let snakeX = xCoo [Math.floor(xCooNumber/2.5)] - (segmentBeginNo * segmentWidth);
             let snakeY = yCoo [Math.floor(yCooNumber/2)];
@@ -56,7 +56,7 @@
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------GAME FUNCTIONS--------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-   function snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight) {
+   function snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNumber, foodNo) {
        let preBuforX = 0;
        let preBuforY = 0;
        let buforX = 0;
@@ -97,7 +97,8 @@
                            buforY = segment.y;
                            segment.y -= segmentHeight;
                    }
-               }                                                                            // bool horizont brace
+               }                                                                            // bool horizont brace              
+            colisionDetection(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food);
             }                                                                               // checking loop index brace
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
            if ( i !== 0 ) {                                                                 // The rest of snakeRepeater array items are replacing
@@ -108,10 +109,10 @@
                segment.y = buforY;                                                          // etc.....
                buforX = preBuforX;
                buforY = preBuforY;
-           }                                                                                // checking loop index brace
+            }                                                                               // checking loop index brace
            resetCoordinates(segment, gameArea);                                             // check is snake in gameArea
-       }                                                                                    // loop brace
-   }
+        }                                                                                   // loop brace
+    }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 function resetCoordinates(segment, gameArea) {
@@ -130,9 +131,40 @@ function resetCoordinates(segment, gameArea) {
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-   function colisionDetection() {
+   function colisionDetection(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food) {
+        let snakeHeadX = snakeRepeater.itemAt(i).x.toFixed(2);
+        let snakeHeadY = snakeRepeater.itemAt(i).y.toFixed(2);
 
-   }
+        let foodAcurateX = foodRepeater.itemAt(foodBeginNo).x.toFixed(2);
+        let foodAcurateY = foodRepeater.itemAt(foodBeginNo).y.toFixed(2);
+
+        console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
+        console.log( "snake normalized X: ",snakeHeadX,", Y:", snakeHeadY);
+
+        if ( (foodAcurateX === snakeHeadX) && (foodAcurateY === snakeHeadY ) ) {
+            console.log("POINT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            console.log("foodrepeater idx: ", foodRepeater.itemAt(foodBeginNo));
+            // food.remove(foodBeginNo);                                                REFACTOR THIS
+            //foodNo ++;
+            //foodBeginNo ++;
+            //add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
+        }
+
+    }
+
+
+        /*
+        console.log( "foodRepeater  x: ", foodRepeater.itemAt(foodBeginNumber).x, " y: ",foodRepeater.itemAt(foodBeginNumber).y )
+        console.log( "snakeRepeater x: ", snakeRepeater.itemAt(i).x," y: ",snakeRepeater.itemAt(i).y)
+        if ( (snakeRepeater.itemAt(i).x === foodRepeater.itemAt(foodBeginNumber).x) && (snakeRepeater.itemAt(i).y === foodRepeater.itemAt(foodBeginNo).y) ) {
+                console.log("POINT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                foodRepeater.itemAt(foodBeginNumber).visible = false
+   //           points ++;
+        }
+
+
+
+    } */
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 

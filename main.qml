@@ -27,7 +27,7 @@ ApplicationWindow {
     property double segmentWidth: gameArea.width/xCooNumber
     property double segmentHeight: gameArea.height/yCooNumber                           // segment width/height are also food dimensions
     property int foodBeginNo: 0                                                         // initial food Number
-    property int foodNo: 50                                                             // maximum food Number
+    property int foodNo: 1                                                              // maximum food Number
 //------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------GAME CONTROL PROPERTIES--------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ ApplicationWindow {
 //------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: snake
-                    Component.onCompleted: Js.raiseSnake(xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth)
+                    Component.onCompleted: Js.raiseSnake(snake, xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth)
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
@@ -113,7 +113,7 @@ ApplicationWindow {
             repeat: true
             running: true
             onTriggered: {
-                Js.snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight);
+                Js.snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNo, foodNo);
                 }
             }
         }                                                                               // game area brace
