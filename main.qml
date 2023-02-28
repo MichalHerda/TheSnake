@@ -69,6 +69,7 @@ ApplicationWindow {
                 ListModel {
                     id: food
                     Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
+                    Component.onDestruction: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {

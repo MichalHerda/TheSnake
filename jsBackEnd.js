@@ -97,8 +97,8 @@
                            buforY = segment.y;
                            segment.y -= segmentHeight;
                    }
-               }                                                                            // bool horizont brace              
-            colisionDetection(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food);
+               }                                                                            // bool horizont brace
+            collisionDetectionFood(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food);
             }                                                                               // checking loop index brace
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
            if ( i !== 0 ) {                                                                 // The rest of snakeRepeater array items are replacing
@@ -131,40 +131,31 @@ function resetCoordinates(segment, gameArea) {
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-   function colisionDetection(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food) {
+   function collisionDetectionFood (snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food) {
         let snakeHeadX = snakeRepeater.itemAt(i).x.toFixed(2);
-        let snakeHeadY = snakeRepeater.itemAt(i).y.toFixed(2);
-
-        let foodAcurateX = foodRepeater.itemAt(foodBeginNo).x.toFixed(2);
+        let snakeHeadY = snakeRepeater.itemAt(i).y.toFixed(2);                              // round the coordinates
+                                                                                            // cause very vierd values
+        let foodAcurateX = foodRepeater.itemAt(foodBeginNo).x.toFixed(2);                   // are returned
         let foodAcurateY = foodRepeater.itemAt(foodBeginNo).y.toFixed(2);
 
         console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
         console.log( "snake normalized X: ",snakeHeadX,", Y:", snakeHeadY);
 
-        if ( (foodAcurateX === snakeHeadX) && (foodAcurateY === snakeHeadY ) ) {
-            console.log("POINT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        if ( (foodAcurateX === snakeHeadX) && (foodAcurateY === snakeHeadY ) ) {            // then compare them
+            console.log("___POINT!!!")
             console.log("foodrepeater idx: ", foodRepeater.itemAt(foodBeginNo));
-            // food.remove(foodBeginNo);                                                REFACTOR THIS
-            //foodNo ++;
-            //foodBeginNo ++;
-            //add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
+            food.remove(foodBeginNo);                                                       // remove if collision detected
+            add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo);             // add next food item
+            foodBeginNo ++;
+            console.log("food begin number: ", foodBeginNo);
         }
+    }       
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    function collisionDetectionSnake () {
 
     }
-
-
-        /*
-        console.log( "foodRepeater  x: ", foodRepeater.itemAt(foodBeginNumber).x, " y: ",foodRepeater.itemAt(foodBeginNumber).y )
-        console.log( "snakeRepeater x: ", snakeRepeater.itemAt(i).x," y: ",snakeRepeater.itemAt(i).y)
-        if ( (snakeRepeater.itemAt(i).x === foodRepeater.itemAt(foodBeginNumber).x) && (snakeRepeater.itemAt(i).y === foodRepeater.itemAt(foodBeginNo).y) ) {
-                console.log("POINT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                foodRepeater.itemAt(foodBeginNumber).visible = false
-   //           points ++;
-        }
-
-
-
-    } */
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
