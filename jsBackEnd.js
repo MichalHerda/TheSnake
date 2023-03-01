@@ -60,15 +60,15 @@
        let preBuforX = 0;
        let preBuforY = 0;
        let buforX = 0;
-       let buforY = 0;
+       let buforY = 0;       
 
        for (let i = 0; i < segmentNo; i ++) {
-           var segment = snakeRepeater.itemAt(i);
+           let segment = snakeRepeater.itemAt(i);
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
             if ( i === 0 ) {                                                                // First snakeRepeater array item is responsible for giving
                                                                                             // whole snake direction
 
-               if (horizont === true) {                                                     // MOVING VERTICALLY :
+               if (horizont === true) {                  // MOVING VERTICALLY :
 
                    if(direction === true) {                                                 // move right
                            buforX = segment.x;
@@ -110,7 +110,7 @@
                buforX = preBuforX;
                buforY = preBuforY;
             }                                                                               // checking loop index brace
-           resetCoordinates(segment, gameArea);                                             // check is snake in gameArea
+           resetCoordinates(segment, gameArea);                                             // check is snake in gameArea        
         }                                                                                   // loop brace
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,6 +154,61 @@ function resetCoordinates(segment, gameArea) {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     function collisionDetectionSnake () {
 
+    }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    function directionAllowedForSnake(horizont, direction, snakeRepeater, segmentWidth, segmentHeight) {
+
+        let snakeHeadX = snakeRepeater.itemAt(0).x.toFixed(2);
+        let snakeHeadY = snakeRepeater.itemAt(0).y.toFixed(2);
+
+        let nextSegmentX = snakeRepeater.itemAt(1).x.toFixed(2);
+        let nextSegmentY = snakeRepeater.itemAt(1).y.toFixed(2);
+
+        console.log("Snake Head   X: ",snakeHeadX,", Y: ",snakeHeadY);
+        console.log("Next Segment X: ",nextSegmentX,", Y: ",nextSegmentY);
+        if(horizont === true) {
+            if (direction === true ) {
+                let comparedCooX = snakeHeadX - segmentWidth.toFixed(2);
+                let comparedCooY = snakeHeadY
+                console.log("Compared Coo X: ",comparedCooX,", Y: ", comparedCooY);
+
+                if( (comparedCooX === nextSegmentX) && (comparedCooY === nextSegmentY)  )  return false;
+                else
+                return true;
+
+            }
+            if (direction === false ) {
+                let comparedCooX = snakeHeadX + segmentWidth.toFixed(2);
+                let comparedCooY = snakeHeadY
+                console.log("Compared Coo X: ",comparedCooX,", Y: ", comparedCooY);
+
+                if( (comparedCooX === nextSegmentX) && (comparedCooY === nextSegmentY)  )  return false;
+                else
+                return true;
+            }
+        }
+        if(horizont === false) {
+            if (direction === true ) {
+                let comparedCooX = snakeHeadX;
+                let comparedCooY = snakeHeadY + segmentHeight.toFixed(2);
+                console.log("Compared Coo X: ",comparedCooX,", Y: ", comparedCooY);
+
+                if( (comparedCooX === nextSegmentX) && (comparedCooY === nextSegmentX)  ) return false;
+                else
+                return true;
+            }
+            if (direction === false ) {
+                let comparedCooX = snakeHeadX;
+                let comparedCooY = snakeHeadY - segmentHeight.toFixed(2);
+                console.log("Compared Coo X: ",comparedCooX,", Y: ", comparedCooY);
+
+                if( (comparedCooX === nextSegmentX) && (comparedCooY === nextSegmentX)  ) return false;
+                else
+                return true;
+
+            }
+        }
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

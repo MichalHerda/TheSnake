@@ -54,14 +54,18 @@ ApplicationWindow {
 
             focus: true
             Keys.onPressed: (event)=> {                                                 // snake control function
-                    if (event.key === Qt.Key_Left)
-                        {direction = false; horizont = true}
-                    if (event.key === Qt.Key_Right)
-                        {direction = true; horizont = true}
-                    if (event.key === Qt.Key_Up)
-                        {direction = false; horizont = false}
-                    if (event.key === Qt.Key_Down)
-                        {direction = true; horizont = false}
+                    let directionAllowed = Js.directionAllowedForSnake(horizont, direction, snakeRepeater, segmentWidth, segmentHeight);
+                    console.log("direction allowed: ", directionAllowed );
+                        if(directionAllowed === true) {
+                            if (event.key === Qt.Key_Left)
+                                {direction = false; horizont = true}
+                            if (event.key === Qt.Key_Right)
+                                {direction = true; horizont = true}
+                            if (event.key === Qt.Key_Up)
+                                {direction = false; horizont = false}
+                            if (event.key === Qt.Key_Down)
+                                {direction = true; horizont = false}
+                        }
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------FOOD ELEMENT---------------------------------------------------------------
