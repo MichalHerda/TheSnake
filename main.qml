@@ -53,20 +53,28 @@ ApplicationWindow {
             clip: true
 
             focus: true
-            Keys.onPressed: (event)=> {                                                 // snake control function
-                    let directionAllowed = Js.directionAllowedForSnake(horizont, direction, snakeRepeater, segmentWidth, segmentHeight);
-                    console.log("direction allowed: ", directionAllowed );
-                        if(directionAllowed === true) {
-                            if (event.key === Qt.Key_Left)
-                                {direction = false; horizont = true}
-                            if (event.key === Qt.Key_Right)
-                                {direction = true; horizont = true}
-                            if (event.key === Qt.Key_Up)
-                                {direction = false; horizont = false}
-                            if (event.key === Qt.Key_Down)
-                                {direction = true; horizont = false}
-                        }
-                }
+            Keys.onPressed: (event)=> {
+                    let snakeHeadX = snakeRepeater.itemAt(0).x;                         // after key pressed, function checks
+                    let snakeHeadY = snakeRepeater.itemAt(0).y;                         // is next snake segment in selected direction
+                                                                                        // if it is - move is not allowed
+                    let nextSegmentX = snakeRepeater.itemAt(1).x;                       //
+                    let nextSegmentY = snakeRepeater.itemAt(1).y;                       // there are situations, when snake changes its coordinates
+                                                                                        // in transitions from right <-> left & up <-> down
+                    let comparedElementLeft  = snakeHeadX - segmentWidth;               //
+                    let comparedElementRight = snakeHeadX + segmentWidth;               // unfortunately as long as such transitions does not work properly
+                                                                                        // I cannot implement this    :(
+                    let comparedElementUp    = snakeHeadY - segmentHeight;
+                    let comparedElementDown  = snakeHeadY + segmentHeight;              // BTW this function will go to jsBackEnd.js later
+
+                        if ( (event.key === Qt.Key_Left) && ( Math.round(comparedElementLeft) !== Math.round(nextSegmentX) ) )
+                            {direction = false; horizont = true}
+                        if ( (event.key === Qt.Key_Right) && ( Math.round(comparedElementRight) !== Math.round(nextSegmentX) ) )
+                            {direction = true; horizont = true}
+                        if ( (event.key === Qt.Key_Up) && ( Math.round(comparedElementUp) !== Math.round(nextSegmentY) ) )
+                            {direction = false; horizont = false}
+                        if ( (event.key === Qt.Key_Down) && ( Math.round(comparedElementDown) !== Math.round(nextSegmentY) ) )
+                            {direction = true; horizont = false}
+            }
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------FOOD ELEMENT---------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
