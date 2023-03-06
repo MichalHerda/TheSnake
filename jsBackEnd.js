@@ -1,4 +1,7 @@
-﻿//-------------------------------------------------------------------------------------------------------------------------------------------------------
+﻿
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------FILL ARRAYS OF GAME AREA COORDINATES--------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     function xCooFill(gameArea, xCooNumber) {
@@ -56,7 +59,8 @@
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------GAME FUNCTIONS--------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-   function snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNumber, foodNo) {
+   function snakeMove
+            (xCoo, yCoo, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNumber, foodNo) {
        let preBuforX = 0;
        let preBuforY = 0;
        let buforX = 0;
@@ -68,6 +72,8 @@
             if ( i === 0 ) {                                                                // First snakeRepeater array item is responsible for giving
                                                                                             // whole snake direction
 
+//               straightTheSnakeRoad(xCoo, yCoo, snakeRepeater);                             // probably game needs this function, cause unfortunatelly during control,
+                                                                                            // snakes go out of the expected way
                if (horizont === true) {                  // MOVING VERTICALLY :
 
                    if(direction === true) {                                                 // move right
@@ -116,27 +122,27 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 function resetCoordinates(segment, gameArea) {
-        if(segment.x > gameArea.width - segment.width) {                                    // this function checks if snake goes
+        if(Math.round(segment.x) > Math.round(gameArea.width - segment.width) ) {           // this function checks if snake goes
             segment.x = 0;                                                                  // outside gameArae
         }                                                                                   // and change coordinates if does
-        if(segment.x < 0) {
+        if(Math.round(segment.x) < 0) {
             segment.x = gameArea.width - segment.width;
         }
-        if(segment.y > gameArea.height - segment.height) {
+        if(Math.round(segment.y) > Math.round(gameArea.height - segment.height) ) {
             segment.y = 0;
         }
-        if(segment.y < 0) {
+        if(Math.round(segment.y) < 0) {
             segment.y = gameArea.height - segment.height;
         }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
    function collisionDetectionFood (snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food) {
-        let snakeHeadX = snakeRepeater.itemAt(i).x.toFixed(2);
-        let snakeHeadY = snakeRepeater.itemAt(i).y.toFixed(2);                              // round the coordinates
-                                                                                            // cause very vierd values
-        let foodAcurateX = foodRepeater.itemAt(foodBeginNo).x.toFixed(2);                   // are returned
-        let foodAcurateY = foodRepeater.itemAt(foodBeginNo).y.toFixed(2);
+        let snakeHeadX = Math.round(snakeRepeater.itemAt(i).x);
+        let snakeHeadY = Math.round(snakeRepeater.itemAt(i).y);                              // round the coordinates
+                                                                                             // cause very vierd values
+        let foodAcurateX = Math.round(foodRepeater.itemAt(foodBeginNo).x);                   // are returned
+        let foodAcurateY = Math.round(foodRepeater.itemAt(foodBeginNo).y);                   // I hope it is enought to avoid bugs
 
         console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
         console.log( "snake normalized X: ",snakeHeadX,", Y:", snakeHeadY);
@@ -150,6 +156,35 @@ function resetCoordinates(segment, gameArea) {
             console.log("food begin number: ", foodBeginNo);
         }
     }       
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    function straightTheSnakeRoad(xCoo, yCoo, snakeRepeater) {
+       let highX = xCoo.length - 1;
+       let closestNumberX = xCoo[highX];
+       console.log("closest number X before itteration:", closestNumberX);
+       for (let i = 0; i < xCoo.length; i++ ) {
+           console.log(i," xCoo lenght: ", xCoo.length);
+           console.log(i," xCoo[i]: ", xCoo[i]);
+           console.log(i," snake head: ",snakeRepeater.itemAt(0).x)
+           console.log(i," snake head minus xCoo[i]: ", Math.abs(snakeRepeater.itemAt(0).x - xCoo[i]))
+           if (Math.abs(snakeRepeater.itemAt(0).x - xCoo[i] ) < Math.abs(closestNumberX - xCoo[i]) ) {closestNumberX = xCoo[i];}
+       }
+       console.log("closest number X:", closestNumberX);
+       snakeRepeater.itemAt(0).x = closestNumberX;
+
+       let highY = yCoo.length - 1;
+       let closestNumberY = yCoo[highY];
+       console.log("closest number Y before itteration:", closestNumberY);
+       for (let j = 0; j < yCoo.length; j++ ) {
+           console.log(j," yCoo lenght: ", yCoo.length);
+           console.log(j," yCoo[i]: ", yCoo[j]);
+           console.log(j," snake head: ",snakeRepeater.itemAt(0).y)
+           console.log(j," snake head minus yCoo[j]: ", Math.abs(snakeRepeater.itemAt(0).y - yCoo[j]))
+           if (Math.abs(snakeRepeater.itemAt(0).y - yCoo[j] ) < Math.abs(closestNumberY - yCoo[j]) ) {closestNumberY = yCoo[j];}
+       }
+       console.log("closest number Y:", closestNumberY);
+       snakeRepeater.itemAt(0).y = closestNumberY;
+    }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
     function collisionDetectionSnake () {

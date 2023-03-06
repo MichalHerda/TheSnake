@@ -122,17 +122,21 @@ ApplicationWindow {
 //------------------------------------------------------------TIMER-------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
         Timer {
-            interval: 200
+            interval: 120
             repeat: true
             running: true
             onTriggered: {
-                Js.snakeMove(gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNo, foodNo);
+                Js.snakeMove
+                (xCoo, yCoo, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNo, foodNo);
                 }
             }
         }                                                                               // game area brace
     Component.onCompleted: {
         Js.xCooFill(gameArea, xCooNumber)
         Js.yCooFill(gameArea, yCooNumber)
+        console.log("xCoo: ",xCoo);
+        console.log("yCoo: ",yCoo);
+
         }
     }                                                                                   // frame brace
 }
