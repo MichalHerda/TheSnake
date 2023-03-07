@@ -72,7 +72,7 @@
             if ( i === 0 ) {                                                                // First snakeRepeater array item is responsible for giving
                                                                                             // whole snake direction
 
-//               straightTheSnakeRoad(xCoo, yCoo, snakeRepeater);                             // probably game needs this function, cause unfortunatelly during control,
+//             straightTheSnakeRoad(xCoo, yCoo, snakeRepeater);                             // probably game needs this function, cause unfortunatelly during control,
                                                                                             // snakes go out of the expected way
                if (horizont === true) {                  // MOVING VERTICALLY :
 
@@ -158,6 +158,9 @@ function resetCoordinates(segment, gameArea) {
     }       
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------FUNCTION NEEDS REFACTORING :
+
     function straightTheSnakeRoad(xCoo, yCoo, snakeRepeater) {
        let highX = xCoo.length - 1;
        let closestNumberX = xCoo[highX];

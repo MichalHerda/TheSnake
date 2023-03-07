@@ -57,14 +57,27 @@ ApplicationWindow {
                     let snakeHeadX = snakeRepeater.itemAt(0).x;                         // after key pressed, function checks
                     let snakeHeadY = snakeRepeater.itemAt(0).y;                         // is next snake segment in selected direction
                                                                                         // if it is - move is not allowed
-                    let nextSegmentX = snakeRepeater.itemAt(1).x;                       //
-                    let nextSegmentY = snakeRepeater.itemAt(1).y;                       // there are situations, when snake changes its coordinates
-                                                                                        // in transitions from right <-> left & up <-> down
-                    let comparedElementLeft  = snakeHeadX - segmentWidth;               //
-                    let comparedElementRight = snakeHeadX + segmentWidth;               // unfortunately as long as such transitions does not work properly
-                                                                                        // I cannot implement this    :(
-                    let comparedElementUp    = snakeHeadY - segmentHeight;
-                    let comparedElementDown  = snakeHeadY + segmentHeight;              // BTW this function will go to jsBackEnd.js later
+                    let nextSegmentX = snakeRepeater.itemAt(1).x;
+                    let nextSegmentY = snakeRepeater.itemAt(1).y;
+
+                    let comparedElementLeft;
+                    let comparedElementRight;
+                    let comparedElementUp;
+                    let comparedElementDown;
+
+                    //check where is snake segment index 2
+
+                    if ( (Math.round(snakeHeadX) !== 0 ) ) comparedElementLeft = (snakeHeadX - segmentWidth);
+                    if ( (Math.round(snakeHeadX) === 0 ) ) comparedElementLeft = (gameArea.width - segmentWidth);
+
+                    if ( (Math.round(snakeHeadX) !== Math.round(gameArea.width - segmentWidth))) comparedElementRight = snakeHeadX + segmentWidth;
+                    if ( (Math.round(snakeHeadX) === Math.round(gameArea.width - segmentWidth))) comparedElementRight = 0;
+
+                    if ( (Math.round(snakeHeadY) !== 0 ) ) comparedElementUp = (snakeHeadY - segmentHeight);
+                    if ( (Math.round(snakeHeadY) === 0 ) ) comparedElementUp = (gameArea.height - segmentHeight);
+
+                    if ( (Math.round(snakeHeadY) !== Math.round(gameArea.height - segmentHeight))) comparedElementDown = snakeHeadY + segmentHeight;
+                    if ( (Math.round(snakeHeadY) === Math.round(gameArea.height - segmentHeight))) comparedElementDown = 0;
 
                         if ( (event.key === Qt.Key_Left) && ( Math.round(comparedElementLeft) !== Math.round(nextSegmentX) ) )
                             {direction = false; horizont = true}
@@ -122,7 +135,7 @@ ApplicationWindow {
 //------------------------------------------------------------TIMER-------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
         Timer {
-            interval: 120
+            interval: 200
             repeat: true
             running: true
             onTriggered: {
@@ -136,7 +149,6 @@ ApplicationWindow {
         Js.yCooFill(gameArea, yCooNumber)
         console.log("xCoo: ",xCoo);
         console.log("yCoo: ",yCoo);
-
         }
     }                                                                                   // frame brace
 }
