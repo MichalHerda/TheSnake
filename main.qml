@@ -19,13 +19,15 @@ ApplicationWindow {
     property int yCooNumber: 30                                                         // number of pixels Y Size/ yCoo Size
     property variant xCoo: Js.xCooFill(gameArea, xCooNumber)                            // fill X Size array
     property variant yCoo: Js.yCooFill(gameArea, yCooNumber)                            // fill Y Size array
+    property int snakeCooIndexX: Math.floor(xCooNumber/4);
+    property int snakeCooIndexY: Math.floor(yCooNumber/2);
 //------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------GLOBAL GAME VARIABLES BELOW------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
     property int segmentNo: 7                                                           // initial snake segments number to create
     property int segmentBeginNo: 0                                                      // for initial snake creating purposes
-    property double segmentWidth: gameArea.width/xCooNumber
-    property double segmentHeight: gameArea.height/yCooNumber                           // segment width/height are also food dimensions
+    property double segmentWidth: (gameArea.width/xCooNumber).toFixed(2)
+    property double segmentHeight: (gameArea.height/yCooNumber).toFixed(2)              // segment width/height are also food dimensions
     property int foodBeginNo: 0                                                         // initial food Number
     property int foodNo: 1                                                              // maximum food Number
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +67,7 @@ ApplicationWindow {
                     let comparedElementUp;
                     let comparedElementDown;
 
-                    //check where is snake segment index 2
+                    //check where is snake segment index 2:
 
                     if ( (Math.round(snakeHeadX) !== 0 ) ) comparedElementLeft = (snakeHeadX - segmentWidth);
                     if ( (Math.round(snakeHeadX) === 0 ) ) comparedElementLeft = (gameArea.width - segmentWidth);
@@ -115,7 +117,8 @@ ApplicationWindow {
 //------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: snake
-                    Component.onCompleted: Js.raiseSnake(snake, xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth)
+                    Component.onCompleted:
+                        Js.raiseSnake(snake, xCoo, yCoo, xCooNumber, yCooNumber, segmentBeginNo, segmentNo, segmentWidth, snakeCooIndexX, snakeCooIndexY)
                 }
 //------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
@@ -135,12 +138,13 @@ ApplicationWindow {
 //------------------------------------------------------------TIMER-------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
         Timer {
-            interval: 200
+            interval: 120
             repeat: true
             running: true
             onTriggered: {
                 Js.snakeMove
-                (xCoo, yCoo, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNo, foodNo);
+                (xCoo, yCoo, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNo, foodNo,
+                 snakeCooIndexX, snakeCooIndexY);
                 }
             }
         }                                                                               // game area brace
