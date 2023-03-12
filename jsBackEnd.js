@@ -105,7 +105,10 @@
             console.log("segment Width: ",segmentWidth);
             console.log("segmentX:",segment.x);
             console.log("segmentY:",segment.y);
-            collisionDetectionFood(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food, segmentWidth, segmentHeight);
+            resetCoordinates(segment, gameArea, segmentWidth, segmentHeight);               // check is snake in gameArea
+            collisionDetectionFood(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo,
+                                   xCoo, yCoo, xCooNumber, yCooNumber, food, segmentWidth,
+                                   segmentHeight);
             }                                                                               // checking loop index brace
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
            if ( i !== 0 ) {                                                                 // The rest of snakeRepeater array items are replacing
@@ -117,7 +120,7 @@
                buforX = preBuforX;
                buforY = preBuforY;
             }                                                                               // checking loop index brace
-           resetCoordinates(segment, gameArea, segmentWidth, segmentHeight);                                             // check is snake in gameArea
+                                                        // check is snake in gameArea
         }                                                                                   // loop brace
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,8 +148,8 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
         let foodAcurateX = Math.round(foodRepeater.itemAt(foodBeginNo).x);                   // are returned
         let foodAcurateY = Math.round(foodRepeater.itemAt(foodBeginNo).y);                   // I hope it is enought to avoid bugs
 
-        console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
-        console.log( "snake normalized X: ",snakeHeadX,", Y:", snakeHeadY);
+        //console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
+        //console.log( "snake normalized X: ",snakeHeadX,", Y:", snakeHeadY);
 
         if ( (Math.abs(foodAcurateX - snakeHeadX) < (segmentWidth/2) ) && ( Math.abs(foodAcurateY - snakeHeadY ) < (segmentHeight/2) ) ) {            // then compare them
             console.log("___POINT!!!")
