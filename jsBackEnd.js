@@ -57,8 +57,8 @@
 //---------------------------------------------------------------GAME FUNCTIONS-------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
    function snakeMove
-            (xCoo, yCoo, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food, foodBeginNumber, foodNo,
-             snakeCooIndexX, snakeCooIndexY) {
+            (xCoo, yCoo, xCooNumber, yCooNumber, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight, foodRepeater, food,
+             foodBeginNo, foodNo, snakeCooIndexX, snakeCooIndexY, snake) {
        let preBuforX = 0;
        let preBuforY = 0;
        let buforX = 0;
@@ -102,10 +102,11 @@
                            segment.y = segment.y.toFixed(2);
                    }
                }                                                                            // bool horizont brace
-            console.log("segment Width: ",segmentWidth);
-            console.log("segmentX:",segment.x);
-            console.log("segmentY:",segment.y);
+            //console.log("segment Width: ",segmentWidth);
+            //console.log("segmentX:",segment.x);
+            //console.log("segmentY:",segment.y);
             resetCoordinates(segment, gameArea, segmentWidth, segmentHeight);               // check is snake in gameArea
+            collisionDetectionSnake (snakeRepeater, snake, i, segmentWidth, segmentHeight);
             collisionDetectionFood(snakeRepeater, foodRepeater, i, foodBeginNo, foodNo,
                                    xCoo, yCoo, xCooNumber, yCooNumber, food, segmentWidth,
                                    segmentHeight);
@@ -119,8 +120,7 @@
                segment.y = buforY;                                                          // etc.....
                buforX = preBuforX;
                buforY = preBuforY;
-            }                                                                               // checking loop index brace
-                                                        // check is snake in gameArea
+            }                                                                               // checking loop index brace                                                        
         }                                                                                   // loop brace
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -157,15 +157,32 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
             food.remove(foodBeginNo);                                                       // remove if collision detected
             add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo);             // add next food item
             foodBeginNo ++;
-            console.log("food begin number: ", foodBeginNo);            
+            console.log("food begin number: ", foodBeginNo);
+            addSegmentAfterFoodSwallowing(snakeRepeater, segmentWidth, segmentHeight, snake)
         }
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-    function collisionDetectionSnake () {
-
+    function collisionDetectionSnake (snakeRepeater, snake, i, segmentWidth, segmentHeight) {
+        let snakeSegmentsNo = snakeRepeater.count
+        console.log("snake items number: ",snakeSegmentsNo);
+        for (let z = 1; z < snakeSegmentsNo; z++) {
+            console.log("snake segment no ",z,"X: ",snakeRepeater.itemAt(z).x);
+            console.log("snake segment no ",z,"Y: ",snakeRepeater.itemAt(z).y);
+            if( (snakeRepeater.itemAt(0).x) === (snakeRepeater.itemAt(z).x) && (snakeRepeater.itemAt(0).y) === (snakeRepeater.itemAt(z).y) )
+            {console.log("SNAKE IS DEAD !!!");}
+        }
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+    function addSegmentAfterFoodSwallowing(snakeRepeater, segmentWidth, segmentHeight, snake) {
+        let snakeX = (snakeRepeater.itemAt((snakeRepeater.count)-1).x).toString();
+        console.log("lastX: ",snakeRepeater.itemAt((snakeRepeater.count)-1).x)
+        let snakeY = (snakeRepeater.itemAt((snakeRepeater.count)-1).y).toString() ;
+        snake.append({ snakeX, snakeY});
+        console.log("ARRAY:",snake);
+        segmentNo++;
+    }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
 
