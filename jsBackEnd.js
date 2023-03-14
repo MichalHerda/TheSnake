@@ -28,16 +28,29 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------FUNCTIONS TO FILL QML LIST MODELS IN REPEATERS-----------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-    function add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo) {
+    function add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo, snakeRepeater, segmentWidth, segmentHeight) {
         for (let i = 0; i < foodNo; i++) {
+            let isFoodOutsideSnake = true;
             let foodX = xCoo[Js.rndGenerator(xCooNumber)];
             let foodY = yCoo[Js.rndGenerator(yCooNumber)];
+            console.log("snakeREEEEPPP last segment idx:",snakeRepeater.count - 1);
+            for (let w = 0; w < (snakeRepeater.count); w++) {
+                if( (Math.abs(foodX - snakeRepeater.itemAt(w).x) < segmentWidth) && (Math.abs(foodY - snakeRepeater.itemAt(w).y) < segmentHeight) ){
+                    isFoodOutsideSnake = false;
+                    break;
+                }
+            }
 
-            food.append ({foodX,foodY});
-            foodBeginNo ++;
-            //console.log("foodX:      ", foodX);
-            //console.log("foodY:      ", foodY);
-            //console.log("Add food    ");
+
+            if(isFoodOutsideSnake === true) {
+                food.append ({foodX,foodY});
+                foodBeginNo ++;
+            }
+            else
+                add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo, snakeRepeater, segmentWidth, segmentHeight);
+                //console.log("foodX:      ", foodX);
+                //console.log("foodY:      ", foodY);
+                //console.log("Add food    ");
         }
     }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -144,8 +157,8 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
    function collisionDetectionFood (snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food, segmentWidth, segmentHeight) {
         let snakeHeadX = Math.round(snakeRepeater.itemAt(i).x);
         let snakeHeadY = Math.round(snakeRepeater.itemAt(i).y);                              // round the coordinates
-                                                                                             // cause very vierd values
-        let foodAcurateX = Math.round(foodRepeater.itemAt(foodBeginNo).x);                   // are returned
+                                                                                             // cause very vierd double values
+        let foodAcurateX = Math.round(foodRepeater.itemAt(foodBeginNo).x);                   // are returned -
         let foodAcurateY = Math.round(foodRepeater.itemAt(foodBeginNo).y);                   // I hope it is enought to avoid bugs
 
         //console.log( "food normalized  X: ",foodAcurateX,", Y:",foodAcurateY);
@@ -155,7 +168,7 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
             console.log("___POINT!!!")
             console.log("foodrepeater idx: ", foodRepeater.itemAt(foodBeginNo));
             food.remove(foodBeginNo);                                                       // remove if collision detected
-            add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo);             // add next food item
+            add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo, snakeRepeater, segmentWidth, segmentHeight);             // add next food item
             foodBeginNo ++;
             console.log("food begin number: ", foodBeginNo);
             addSegmentAfterFoodSwallowing(snakeRepeater, segmentWidth, segmentHeight, snake)

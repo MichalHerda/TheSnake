@@ -15,8 +15,8 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------ARRAYS FOR GAME COORDINATES-----------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
-    property int xCooNumber: 32                                                         // number of pixels X Size/ xCoo Size
-    property int yCooNumber: 24                                                         // number of pixels Y Size/ yCoo Size
+    property int xCooNumber: 20                                                        // number of pixels X Size/ xCoo Size
+    property int yCooNumber: 14                                                         // number of pixels Y Size/ yCoo Size
     property variant xCoo: Js.xCooFill(gameArea, xCooNumber)                            // fill X Size array
     property variant yCoo: Js.yCooFill(gameArea, yCooNumber)                            // fill Y Size array
     property int snakeCooIndexX: Math.floor(xCooNumber/4);
@@ -95,8 +95,8 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
                 ListModel {
                     id: food
-                    Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
-                    Component.onDestruction: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo)
+                    Component.onCompleted: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo, snakeRepeater, segmentWidth, segmentHeight)
+                    Component.onDestruction: Js.add(xCoo, yCoo, xCooNumber, yCooNumber, food, foodNo, foodBeginNo, snakeRepeater, segmentWidth, segmentHeight)
                 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
                     Repeater {
@@ -138,7 +138,7 @@ ApplicationWindow {
 //-----------------------------------------------------------------TIMER------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
         Timer {
-            interval: 100
+            interval: 200
             repeat: true
             running: true
             onTriggered: {
@@ -148,6 +148,7 @@ ApplicationWindow {
                 }
             }
         }                                                                               // game area brace
+
     Component.onCompleted: {
         Js.xCooFill(gameArea, xCooNumber)
         Js.yCooFill(gameArea, yCooNumber)
@@ -155,5 +156,13 @@ ApplicationWindow {
         console.log("yCoo: ",yCoo);
         }
     }                                                                                   // frame brace
+
+    Rectangle {
+        id: hudFrame
+        width: mainWindow.width - frame.width
+        height: frame.height
+        anchors.right: parent.right
+        color: "darkblue"
+    }
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
