@@ -15,8 +15,8 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------ARRAYS FOR GAME COORDINATES-----------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
-    property int xCooNumber: 20                                                        // number of pixels X Size/ xCoo Size
-    property int yCooNumber: 14                                                         // number of pixels Y Size/ yCoo Size
+    property int xCooNumber: 20                                                         // number of pixels X Size/ xCoo Size
+    property int yCooNumber: 15                                                         // number of pixels Y Size/ yCoo Size
     property variant xCoo: Js.xCooFill(gameArea, xCooNumber)                            // fill X Size array
     property variant yCoo: Js.yCooFill(gameArea, yCooNumber)                            // fill Y Size array
     property int snakeCooIndexX: Math.floor(xCooNumber/4);
@@ -36,13 +36,18 @@ ApplicationWindow {
     property bool direction: true                                                       // true: right||down,  false: left||up
     property bool horizont:  true                                                       // true: move xDim,    false: move yDim
 //----------------------------------------------------------------------------------------------------------------------------------------------------
+    QtObject {
+        id: points
+        property int score: 0
+    }
+//----------------------------------------------------------------------------------------------------------------------------------------------------
     Rectangle {
         id: frame                                                                       // frame is only for esthetic functions
-        width: Math.floor(mainWindow.width/1.25)
+        width: Math.floor(mainWindow.width/1.3)
         height: Math.floor(mainWindow.height)
         anchors.left: parent.left
         color: "blue"
-        clip: true
+        clip: true               
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------GAME AREA--------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -158,11 +163,35 @@ ApplicationWindow {
     }                                                                                   // frame brace
 
     Rectangle {
-        id: hudFrame
+        id: hud
         width: mainWindow.width - frame.width
         height: frame.height
         anchors.right: parent.right
         color: "darkblue"
+        border {color: "darkslategrey"; width: hud.width/20}
+
+        Column {
+            id: hudColumn
+            width: hud.width/1.5
+            height: hud.height/1.2
+            anchors.centerIn: hud
+            spacing: hudColumn.height/10
+            //horizontalAlignment: Qt.AlignHCenter
+
+            Label {
+                text: "SCORE : "
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "steelblue"
+                font { pointSize: 25; underline: true }
+            }
+
+            Label {
+                text: points.score.toString()
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "steelblue"
+                font { pointSize: 35 }
+            }
+        }
     }
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------

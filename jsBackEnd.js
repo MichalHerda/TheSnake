@@ -41,7 +41,6 @@
                 }
             }
 
-
             if(isFoodOutsideSnake === true) {
                 food.append ({foodX,foodY});
                 foodBeginNo ++;
@@ -154,7 +153,8 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-   function collisionDetectionFood (snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo, xCooNumber, yCooNumber, food, segmentWidth, segmentHeight) {
+   function collisionDetectionFood (snakeRepeater, foodRepeater, i, foodBeginNo, foodNo, xCoo, yCoo,
+                                    xCooNumber, yCooNumber, food, segmentWidth, segmentHeight) {
         let snakeHeadX = Math.round(snakeRepeater.itemAt(i).x);
         let snakeHeadY = Math.round(snakeRepeater.itemAt(i).y);                              // round the coordinates
                                                                                              // cause very vierd double values
@@ -172,6 +172,8 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
             foodBeginNo ++;
             console.log("food begin number: ", foodBeginNo);
             addSegmentAfterFoodSwallowing(snakeRepeater, segmentWidth, segmentHeight, snake)
+            points.score += 1;
+            console.log("***************************************************points:", points.score);
         }
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -198,4 +200,5 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
