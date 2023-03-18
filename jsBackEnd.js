@@ -185,7 +185,8 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
             console.log("snake segment no ",z,"X: ",snakeRepeater.itemAt(z).x);
             console.log("snake segment no ",z,"Y: ",snakeRepeater.itemAt(z).y);
             if( (snakeRepeater.itemAt(0).x) === (snakeRepeater.itemAt(z).x) && (snakeRepeater.itemAt(0).y) === (snakeRepeater.itemAt(z).y) )
-            {console.log("SNAKE IS DEAD !!!");}
+            {console.log("SNAKE IS DEAD !!!");
+            points.gameOver = true; }
         }
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -200,5 +201,21 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
+    function restartGame(snakeRepeater, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo) {
+        points.gameOver = false;
+        points.score = 0;
+        direction = true;
+        horizont = true;
+        for(let i = 0; i < segmentNo; i++) {
+            snakeRepeater.itemAt(i).x = xCoo [snakeCooIndexX + (snakeCooIndexX - i)];
+            snakeRepeater.itemAt(i).y = yCoo [snakeCooIndexY];
+            console.log("SegmentbeginNo: ", segmentBeginNo)
+            if(i > 7) {
+             //REMOVE, BUT HOW???????????????????
+            }
+        }
 
-
+        segmentBeginNo = 0;
+    }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------

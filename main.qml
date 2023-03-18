@@ -39,6 +39,7 @@ ApplicationWindow {
     QtObject {
         id: points
         property int score: 0
+        property bool gameOver: false
     }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
     Rectangle {
@@ -93,7 +94,11 @@ ApplicationWindow {
                         if ( (event.key === Qt.Key_Up) && ( Math.round(comparedElementUp) !== Math.round(nextSegmentY) ) )
                             {direction = false; horizont = false}
                         if ( (event.key === Qt.Key_Down) && ( Math.round(comparedElementDown) !== Math.round(nextSegmentY) ) )
-                            {direction = true; horizont = false}
+                            {direction = true; horizont = false; console.log("hufiuehf")}
+                        if ( (event.key === Qt.Key_Space) && (points.gameOver === true) ) {
+                            Js.restartGame(snakeRepeater, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo);
+                            console.log("PRESSED, gameover = ", points.gameOver)
+                        }
             }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------FOOD ELEMENT--------------------------------------------------------------------
@@ -145,13 +150,31 @@ ApplicationWindow {
         Timer {
             interval: 200
             repeat: true
-            running: true
+            running: !points.gameOver
             onTriggered: {
                 Js.snakeMove
                 (xCoo, yCoo, xCooNumber, yCooNumber, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight,
                  foodRepeater, food, foodBeginNo, foodNo, snakeCooIndexX, snakeCooIndexY, snake);
                 }
             }
+
+        Rectangle {
+            id: gameOverWin
+            width: gameArea.width/2
+            height: gameArea.height/4
+            anchors.centerIn: parent
+            color: "aqua"
+            border {color: "darkblue"; width: gameOverWin.width/20}
+            visible: points.gameOver ? true : false
+
+            Text {
+                id: gameOverText
+                anchors.centerIn: parent
+                text: qsTr("GAME OVER !!! PRESS ANY KEY")
+                color: "darkblue"
+                font {pointSize: 12; bold: true}
+            }
+        }
         }                                                                               // game area brace
 
     Component.onCompleted: {
