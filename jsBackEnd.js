@@ -125,7 +125,7 @@
             }                                                                               // checking loop index brace
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
            if ( i !== 0 ) {                                                                 // The rest of snakeRepeater array items are replacing
-                                                                                            // in the following formula:
+                                                                                            // in the following formula:              
                preBuforX = segment.x;                                                       // item 1 = item 0 (coordinates)
                preBuforY = segment.y;                                                       // item 2 = item 1
                segment.x = buforX;                                                          // item 3 = item 2
@@ -173,6 +173,7 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
             console.log("food begin number: ", foodBeginNo);
             addSegmentAfterFoodSwallowing(snakeRepeater, segmentWidth, segmentHeight, snake)
             points.score += 1;
+            if(points.score % 10 === 0) {points.gameLevel++ }
             console.log("***************************************************points:", points.score);
         }
     }
@@ -180,10 +181,10 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
     function collisionDetectionSnake (snakeRepeater, snake, i, segmentWidth, segmentHeight) {
         let snakeSegmentsNo = snakeRepeater.count
-        console.log("snake items number: ",snakeSegmentsNo);
+        //console.log("snake items number: ",snakeSegmentsNo);
         for (let z = 1; z < snakeSegmentsNo; z++) {
-            console.log("snake segment no ",z,"X: ",snakeRepeater.itemAt(z).x);
-            console.log("snake segment no ",z,"Y: ",snakeRepeater.itemAt(z).y);
+            //console.log("snake segment no ",z,"X: ",snakeRepeater.itemAt(z).x);
+            //console.log("snake segment no ",z,"Y: ",snakeRepeater.itemAt(z).y);
             if( (snakeRepeater.itemAt(0).x) === (snakeRepeater.itemAt(z).x) && (snakeRepeater.itemAt(0).y) === (snakeRepeater.itemAt(z).y) )
             {console.log("SNAKE IS DEAD !!!");
             points.gameOver = true; }
@@ -201,20 +202,26 @@ function resetCoordinates(segment, gameArea, segmentWidth, segmentHeight) {
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-    function restartGame(snakeRepeater, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo) {
+    function restartGame(snakeRepeater, snake, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo) {
         points.gameOver = false;
         points.score = 0;
+        points.gameLevel = 1;
         direction = true;
         horizont = true;
-        for(let i = 0; i < segmentNo; i++) {
+
+        //console.log("SEGMENT NUMBER: ", segmentNo);
+        for(let i = ( snakeRepeater.count - 1 ); i >= 0; i--) {
+            //console.log("snakeIIIIIIIIIIIIIIIIIIIIII", snake(i));
+            if(i >= 5) {
+             snake.remove(i)                                                                    //REMOVE
+            }
+            if(i < 5) {
             snakeRepeater.itemAt(i).x = xCoo [snakeCooIndexX + (snakeCooIndexX - i)];
             snakeRepeater.itemAt(i).y = yCoo [snakeCooIndexY];
             console.log("SegmentbeginNo: ", segmentBeginNo)
-            if(i > 7) {
-             //REMOVE, BUT HOW???????????????????
             }
         }
-
+        segmentNo = 5;
         segmentBeginNo = 0;
     }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------

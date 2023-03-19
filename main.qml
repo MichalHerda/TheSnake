@@ -15,8 +15,8 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------ARRAYS FOR GAME COORDINATES-----------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
-    property int xCooNumber: 20                                                         // number of pixels X Size/ xCoo Size
-    property int yCooNumber: 15                                                         // number of pixels Y Size/ yCoo Size
+    property int xCooNumber: 18                                                         // number of pixels X Size/ xCoo Size
+    property int yCooNumber: 16                                                         // number of pixels Y Size/ yCoo Size
     property variant xCoo: Js.xCooFill(gameArea, xCooNumber)                            // fill X Size array
     property variant yCoo: Js.yCooFill(gameArea, yCooNumber)                            // fill Y Size array
     property int snakeCooIndexX: Math.floor(xCooNumber/4);
@@ -24,7 +24,7 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------GLOBAL GAME VARIABLES BELOW-----------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
-    property int segmentNo: 7                                                           // initial snake segments number to create
+    property int segmentNo: 5                                                           // initial snake segments number to create
     property int segmentBeginNo: 0                                                      // for initial snake creating purposes
     property double segmentWidth: (gameArea.width/xCooNumber).toFixed(2)
     property double segmentHeight: (gameArea.height/yCooNumber).toFixed(2)              // segment width/height are also food dimensions
@@ -39,7 +39,9 @@ ApplicationWindow {
     QtObject {
         id: points
         property int score: 0
+        property int gameLevel: 1
         property bool gameOver: false
+        property bool pause: false
     }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
     Rectangle {
@@ -88,17 +90,21 @@ ApplicationWindow {
                     if ( (Math.round(snakeHeadY) === Math.round(gameArea.height - segmentHeight))) comparedElementDown = 0;
 
                         if ( (event.key === Qt.Key_Left) && ( Math.round(comparedElementLeft) !== Math.round(nextSegmentX) ) )
-                            {direction = false; horizont = true}
+                            {direction = false; horizont = true; }
                         if ( (event.key === Qt.Key_Right) && ( Math.round(comparedElementRight) !== Math.round(nextSegmentX) ) )
-                            {direction = true; horizont = true}
+                            {direction = true; horizont = true; }
                         if ( (event.key === Qt.Key_Up) && ( Math.round(comparedElementUp) !== Math.round(nextSegmentY) ) )
-                            {direction = false; horizont = false}
+                            {direction = false; horizont = false; }
                         if ( (event.key === Qt.Key_Down) && ( Math.round(comparedElementDown) !== Math.round(nextSegmentY) ) )
-                            {direction = true; horizont = false; console.log("hufiuehf")}
+                            {direction = true; horizont = false; }
                         if ( (event.key === Qt.Key_Space) && (points.gameOver === true) ) {
-                            Js.restartGame(snakeRepeater, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo);
+                            Js.restartGame(snakeRepeater, snake, segmentNo, segmentBeginNo, snakeCooIndexX, snakeCooIndexY, xCoo, yCoo);
                             console.log("PRESSED, gameover = ", points.gameOver)
                         }
+                        if ( event.key === Qt.Key_P ) {
+                                    points.pause = points.pause ? false : true;
+                                    console.log("pause: ", points.pause);
+                                }
             }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------FOOD ELEMENT--------------------------------------------------------------------
@@ -147,34 +153,44 @@ ApplicationWindow {
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------TIMER------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------------------------------------------
-        Timer {
-            interval: 200
-            repeat: true
-            running: !points.gameOver
-            onTriggered: {
-                Js.snakeMove
-                (xCoo, yCoo, xCooNumber, yCooNumber, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight,
-                 foodRepeater, food, foodBeginNo, foodNo, snakeCooIndexX, snakeCooIndexY, snake);
+            Timer {
+                interval: 250 - (points.gameLevel * 10)
+                repeat: true
+                running: !points.gameOver && !points.pause
+                onTriggered: {
+                    Js.snakeMove
+                    (xCoo, yCoo, xCooNumber, yCooNumber, gameArea, segmentNo, snakeRepeater, horizont, direction, segmentWidth, segmentHeight,
+                     foodRepeater, food, foodBeginNo, foodNo, snakeCooIndexX, snakeCooIndexY, snake);
+                    }
+                }
+
+            Rectangle {
+                id: gameOverWin
+                width: gameArea.width/1.75
+                height: gameArea.height/6
+                anchors.centerIn: parent
+                color: "darkgoldenrod"
+                border {color: "darkblue"; width: gameOverWin.width/20}
+                visible: points.gameOver || points.pause ? true : false
+
+                Text {
+                    id: gameOverText
+                    anchors.centerIn: parent
+                    text: qsTr("GAME OVER !!! PRESS SPACE - NEW GAME")
+                    color: "darkblue"
+                    font {pointSize: 12; bold: true}
+                    visible: points.gameOver ? true : false
+                }
+
+                Text {
+                    id: pauseText
+                    anchors.centerIn: parent
+                    text: qsTr("GAME PAUSED - PRESS 'P' TO CONTINUE")
+                    color: "darkblue"
+                    font {pointSize: 12; bold: true}
+                    visible: points.pause ? true : false
                 }
             }
-
-        Rectangle {
-            id: gameOverWin
-            width: gameArea.width/2
-            height: gameArea.height/4
-            anchors.centerIn: parent
-            color: "aqua"
-            border {color: "darkblue"; width: gameOverWin.width/20}
-            visible: points.gameOver ? true : false
-
-            Text {
-                id: gameOverText
-                anchors.centerIn: parent
-                text: qsTr("GAME OVER !!! PRESS ANY KEY")
-                color: "darkblue"
-                font {pointSize: 12; bold: true}
-            }
-        }
         }                                                                               // game area brace
 
     Component.onCompleted: {
@@ -198,7 +214,7 @@ ApplicationWindow {
             width: hud.width/1.5
             height: hud.height/1.2
             anchors.centerIn: hud
-            spacing: hudColumn.height/10
+            spacing: hudColumn.height/25
             //horizontalAlignment: Qt.AlignHCenter
 
             Label {
@@ -210,6 +226,20 @@ ApplicationWindow {
 
             Label {
                 text: points.score.toString()
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "steelblue"
+                font { pointSize: 35 }
+            }
+
+            Label {
+                text: "LEVEL : "
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "steelblue"
+                font { pointSize: 25; underline: true }
+            }
+
+            Label {
+                text: points.gameLevel.toString()
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "steelblue"
                 font { pointSize: 35 }
