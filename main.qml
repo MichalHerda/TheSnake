@@ -40,7 +40,7 @@ ApplicationWindow {
         id: points
         property int score: 0
         property int gameLevel: 1
-        property bool gameOver: true
+        property bool gameOver: false
         property bool pause: false
     }
 //----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -247,15 +247,7 @@ ApplicationWindow {
         }
     }
 
-    HighScores {
-        id: highScoresForm
-        width: parent.width
-        height: parent.height
-        visible: points.gameOver
-        Keys.onPressed: {
-            points.gameOver = false;
-        }
-    }
+
 }
 
 
